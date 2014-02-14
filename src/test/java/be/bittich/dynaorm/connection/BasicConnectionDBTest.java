@@ -35,6 +35,9 @@ public class BasicConnectionDBTest {
         req = "INSERT INTO TEST(data) VALUES('kikoo')";
         stmt = connection.prepareStatement(req);
         stmt.executeUpdate();
+                req = "INSERT INTO TEST(data) VALUES('lolmdr')";
+        stmt = connection.prepareStatement(req);
+        stmt.executeUpdate();
         req = "SELECT * FROM TEST";
         stmt = connection.prepareStatement(req);
         ResultSet rs = stmt.executeQuery();
