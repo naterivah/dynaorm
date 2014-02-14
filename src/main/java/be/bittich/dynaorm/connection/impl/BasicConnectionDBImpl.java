@@ -1,5 +1,6 @@
-package be.bittich.dynaorm.connection;
+package be.bittich.dynaorm.connection.impl;
 
+import be.bittich.dyanorm.connection.BasicConnectionDB;
 import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
 
@@ -7,9 +8,9 @@ import org.apache.commons.dbcp.BasicDataSource;
  *
  * @author Nordine
  */
-public final class BasicConnectionDB implements ConnectionDB {
+public final class BasicConnectionDBImpl implements BasicConnectionDB {
 
-    private static BasicConnectionDB connectionDB;
+    private static BasicConnectionDBImpl connectionDB;
     private static final long serialVersionUID = -7339131302708696365L;
     private String login;
     private String password;
@@ -18,7 +19,7 @@ public final class BasicConnectionDB implements ConnectionDB {
     private Integer initialSize;
     private BasicDataSource ds;
 
-    private BasicConnectionDB() {
+    private BasicConnectionDBImpl() {
     }
 
     @Override
@@ -32,6 +33,7 @@ public final class BasicConnectionDB implements ConnectionDB {
             ds.setInitialSize(initialSize);
             ds.setTestOnBorrow(false);
             ds.setTestWhileIdle(true);
+          
         }
         return ds;
     }
@@ -57,32 +59,32 @@ public final class BasicConnectionDB implements ConnectionDB {
     }
 
     @Override
-    public ConnectionDB setDriver(String driver) {
+    public BasicConnectionDB setDriver(String driver) {
         this.driver = driver;
         return this;
     }
 
     @Override
-    public ConnectionDB setUrl(String url) {
+    public BasicConnectionDB setUrl(String url) {
         this.url = url;
         return this;
     }
 
     @Override
-    public ConnectionDB setPassword(String password) {
+    public BasicConnectionDB setPassword(String password) {
         this.password = password;
         return this;
     }
 
     @Override
-    public ConnectionDB setLogin(String login) {
+    public BasicConnectionDB setLogin(String login) {
         this.login = login;
         return this;
     }
 
-    public static final ConnectionDB getInstance() {
+    public static final BasicConnectionDB getInstance() {
         if (connectionDB == null) {
-            connectionDB = new BasicConnectionDB();
+            connectionDB = new BasicConnectionDBImpl();
         }
         return connectionDB;
     }
@@ -93,7 +95,7 @@ public final class BasicConnectionDB implements ConnectionDB {
     }
 
     @Override
-    public ConnectionDB setInitialSize(Integer initialSize) {
+    public BasicConnectionDB setInitialSize(Integer initialSize) {
         this.initialSize=initialSize;
         return this;
     }

@@ -2,6 +2,8 @@
 
 package be.bittich.dynaorm.connection;
 
+import be.bittich.dyanorm.connection.BasicConnectionDB;
+import be.bittich.dynaorm.connection.impl.BasicConnectionDBImpl;
 import be.bittich.dynaorm.core.SystemConstant;
 import java.sql.SQLException;
 import javax.sql.DataSource;
@@ -16,7 +18,7 @@ import org.junit.Test;
 public class BasicConnectionDBTest {
     @Test
     public void getInstance() throws SQLException{
-        ConnectionDB conn= BasicConnectionDB.getInstance();
+        BasicConnectionDB conn= BasicConnectionDBImpl.getInstance();
         DataSource ds=conn.setDriver(SystemConstant.DRIVER_MYSQL)
                 .setLogin("root")
                 .setPassword("")
