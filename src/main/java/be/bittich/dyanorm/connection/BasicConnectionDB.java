@@ -31,7 +31,5 @@ public interface BasicConnectionDB extends ConnectionDB{
 
     BasicConnectionDB setLogin(String login);
     
-    BasicConnectionDB setAutoCommit(boolean autoCommit);
     
-    Boolean isAutoCommit();
 }

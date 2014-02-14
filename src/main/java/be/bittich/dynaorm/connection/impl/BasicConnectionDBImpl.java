@@ -1,12 +1,12 @@
 package be.bittich.dynaorm.connection.impl;
 
 import be.bittich.dyanorm.connection.BasicConnectionDB;
+import com.jolbox.bonecp.BoneCPDataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
-import org.apache.commons.dbcp.BasicDataSource;
 
 /**
  *
@@ -18,80 +18,60 @@ public final class BasicConnectionDBImpl implements BasicConnectionDB {
     private static final long serialVersionUID = -7339131302708696365L;
     private static final Logger LOG = Logger.getLogger(BasicConnectionDBImpl.class.getName());
     private static BasicConnectionDBImpl connectionDB;
-    private String login;
-    private String password;
-    private String url;
-    private String driver;
-    private Integer initialSize;
-    private BasicDataSource ds;
-    private boolean autoCommit;
+
+    private final BoneCPDataSource ds;
 
     private BasicConnectionDBImpl() {
-        this.autoCommit = true;
-        this.initialSize = 5;
-    }
-
-    private void buildDataSource() {
-        ds = new BasicDataSource();
-        ds.setDriverClassName(driver);
-        ds.setUrl(url);
-        ds.setUsername(login);
-        ds.setPassword(password);
-        ds.setInitialSize(initialSize);
-        ds.setTestOnBorrow(false);
-        ds.setTestWhileIdle(true);
-        ds.setDefaultAutoCommit(autoCommit);
+        ds = new BoneCPDataSource();
     }
 
     @Override
     public DataSource getDataSource() {
-        if (ds == null) {
-            buildDataSource();
-        }
+
         return ds;
     }
 
     @Override
     public String getDriver() {
-        return this.driver;
+        return this.ds.getDriverClass();
     }
 
     @Override
     public String getUrl() {
-        return this.url;
+        return this.ds.getJdbcUrl();
     }
 
     @Override
     public String getPassword() {
-        return this.password;
+        return this.ds.getPassword();
     }
 
     @Override
     public String getLogin() {
-        return this.login;
+        return this.ds.getUsername();
     }
 
     @Override
     public BasicConnectionDB setDriver(String driver) {
-        this.driver = driver;
+        this.ds.setDriverClass(driver);
         return this;
     }
 
     @Override
     public BasicConnectionDB setUrl(String url) {
-        this.url = url;
+        this.ds.setJdbcUrl(url);
         return this;
     }
 
     @Override
     public BasicConnectionDB setPassword(String password) {
-        this.password = password;
+        this.ds.setPassword(password);
         return this;
     }
 
     @Override
     public BasicConnectionDB setLogin(String login) {
-        this.login = login;
+        this.ds.setUsername(login);
         return this;
     }
 
@@ -104,12 +84,12 @@ public final class BasicConnectionDBImpl implements BasicConnectionDB {
 
     @Override
     public Integer getInitialSize() {
-        return initialSize;
+        return this.ds.getPoolAvailabilityThreshold();
     }
 
     @Override
     public BasicConnectionDB setInitialSize(Integer initialSize) {
-        this.initialSize = initialSize;
+        this.ds.setPoolAvailabilityThreshold(initialSize);
         return this;
     }
 
@@ -124,23 +104,8 @@ public final class BasicConnectionDBImpl implements BasicConnectionDB {
     }
 
     @Override
-    public BasicConnectionDB setAutoCommit(boolean autoCommit) {
-        this.autoCommit = autoCommit;
-        return this;
-    }
-
-    @Override
-    public Boolean isAutoCommit() {
-        return autoCommit;
-    }
-
-    @Override
     public void close() {
-        try {
-            this.ds.close();
-        } catch (SQLException ex) {
-            LOG.log(Level.SEVERE, "Cannot close the connections, Error: \n" + ex.getMessage(), ex);
-        }
+        this.ds.close();
 
     }
 
