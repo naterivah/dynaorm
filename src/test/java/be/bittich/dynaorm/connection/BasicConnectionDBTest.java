@@ -1,5 +1,4 @@
 package be.bittich.dynaorm.connection;
-
 import be.bittich.dyanorm.connection.BasicConnectionDB;
 import be.bittich.dynaorm.connection.impl.BasicConnectionDBImpl;
 import be.bittich.dynaorm.core.SystemConstant;
