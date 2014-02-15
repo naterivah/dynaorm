@@ -17,14 +17,14 @@ package be.bittich.dynaorm.repository;
 
 import static be.bittich.dynaorm.core.DynaUtils.loadProperties;
 import be.bittich.dynaorm.entity.City;
+import be.bittich.dynaorm.exception.BeanNotFoundException;
 import be.bittich.dynaorm.ioc.BasicConfigurationBean;
-import be.bittich.dynaorm.repository.DAOCity;
-import be.bittich.dynaorm.repository.DynaRepository;
+import static be.bittich.dynaorm.ioc.BasicContainer.getContainer;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
 import static junit.framework.TestCase.assertNotNull;
-import org.junit.Before;
+import org.junit.Before; 
 import org.junit.Test;
 
 /**
@@ -38,11 +38,12 @@ public class TestDao {
         InputStream input = getClass().getClassLoader().getResourceAsStream("dbconfig.properties");
         Properties dbProperties = loadProperties(input);
         BasicConfigurationBean.builder(dbProperties);
+        BasicConfigurationBean.registerBean("daoCity", new DAOCity());
     }
 
     @Test
-    public void testDao() {
-        DynaRepository repository= new DAOCity();
+    public void testDao() throws BeanNotFoundException {
+        DynaRepository repository= getContainer().inject("daoCity");
         List<City> list = repository.findAll();
         assertNotNull(list);
         for(City c: list){

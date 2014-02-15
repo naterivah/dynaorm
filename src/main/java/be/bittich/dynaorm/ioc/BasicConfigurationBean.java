@@ -24,9 +24,10 @@ public class BasicConfigurationBean implements Serializable {
     private static final long serialVersionUID = -4279720585191618511L;
 
     /**
-     * BeanBuilder. if you want to add new Bean to the container, it would
-     * be better to extends BasicConfigurationBean and configure your beans inside
-     * If you do that, do not forget to override the builder method and call super() 
+     * BeanBuilder. if you want to add new Bean to the container, it would be
+     * better to extends BasicConfigurationBean and configure your beans inside
+     * If you do that, do not forget to override the builder method and call
+     * super()
      */
     public static void builder(Properties dbProperties) {
         configureConn(dbProperties);
@@ -46,12 +47,8 @@ public class BasicConfigurationBean implements Serializable {
                 .setPassword(dbProperties.getProperty("password"))
                 .setUrl(dbProperties.getProperty("url"))
                 .setInitialSize(Integer.parseInt(dbProperties.getProperty("initialSize")));
-        Bean<ConnectionDB> bean = new Bean("connectionDB", conn);
-        try {
-            getContainer().addBean(bean);
-        } catch (BeanAlreadyExistException | IOCContainerException ex) {
-            Logger.getLogger(BasicConfigurationBean.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
-        }
+        registerBean("connectionDB", conn);
+
         //configure dialect
         configureDialect(driver);
     }
@@ -60,23 +57,40 @@ public class BasicConfigurationBean implements Serializable {
      * configure a QueryRunner bean
      */
     private static void configureQueryRunner() {
+
+        ConnectionDB bean;
         try {
-            ConnectionDB bean = getContainer().inject("connectionDB");
+            bean = getContainer().inject("connectionDB");
             QueryRunner run = new QueryRunner(bean.getDataSource());
-            Bean<QueryRunner> beanR = new Bean("queryRunner", run);
-            getContainer().addBean(beanR);
-        } catch (BeanNotFoundException | BeanAlreadyExistException | IOCContainerException ex) {
+            registerBean("queryRunner", run);
+        } catch (BeanNotFoundException ex) {
+            Logger.getLogger(BasicConfigurationBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    private static void configureDialect(String dialect) {
+        Dialect dialectB;
+        try {
+            dialectB = (Dialect) Class.forName(DIALECT.get(dialect)).newInstance();
+            registerBean("dialect", dialectB);
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException ex) {
             Logger.getLogger(BasicConfigurationBean.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    private static void configureDialect(String dialect) {
+    /**
+     * Register a new bean
+     *
+     * @param <T>
+     * @param t
+     * @param label
+     */
+    public static <T> void registerBean(String label, T t) {
+        Bean<T> bean = new Bean(label, t);
         try {
-            Dialect dialectB = (Dialect) Class.forName(DIALECT.get(dialect)).newInstance();
-            Bean<Dialect> dialectBean = new Bean<Dialect>("dialect", dialectB);
-            getContainer().addBean(dialectBean);
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
-                BeanAlreadyExistException | IOCContainerException ex) {
+            getContainer().addBean(bean);
+        } catch (BeanAlreadyExistException | IOCContainerException ex) {
             Logger.getLogger(BasicConfigurationBean.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
