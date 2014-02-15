@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package be.bittich.dynaorm.ioc;
 
 import be.bittich.dynaorm.exception.BeanAlreadyExistException;
@@ -27,7 +23,11 @@ public class BasicContainer implements Serializable {
     private BasicContainer() {
 
     }
-
+    
+    /**
+     * Return the container unique instance
+     * @return the container
+     */
     public static BasicContainer getContainer() {
         if (container == null) {
             container = new BasicContainer();
@@ -35,7 +35,14 @@ public class BasicContainer implements Serializable {
         return container;
     }
 
-    public void addBean(Bean bean) throws BeanAlreadyExistException, IOCContainerException {
+    /**
+     * Add a bean to the container
+     * @param <T>
+     * @param bean
+     * @throws BeanAlreadyExistException
+     * @throws IOCContainerException 
+     */
+    public <T> void addBean(Bean<T> bean) throws BeanAlreadyExistException, IOCContainerException {
         if (inject.containsValue(bean)) {
             throw new BeanAlreadyExistException("IOC exception: bean already exists");
         }
@@ -46,16 +53,32 @@ public class BasicContainer implements Serializable {
         this.inject.put(bean.getId(), bean);
     }
 
-    public Bean releaseBean(String id) {
+    /**
+     * Remove a bean from the container
+     * @param <T>
+     * @param id
+     * @return 
+     */
+    public <T> Bean<T> releaseBean(String id) {
         return inject.remove(id);
 
     }
 
-    public Bean inject(String id) throws BeanNotFoundException {
+    /**
+     * The bean is injected by the container
+     * @param <T>
+     * @param id
+     * @return
+     * @throws BeanNotFoundException 
+     */
+    public <T> T inject(String id) throws BeanNotFoundException {
         if (inject.get(id) == null) {
             throw new BeanNotFoundException("Bean not found");
         }
-        return inject.get(id);
+        Bean<T> bean = inject.get(id);
+        Class<T> clazz = bean.getClazz();
+        return clazz.cast(inject.get(id).getBean());
+
     }
 
 }
