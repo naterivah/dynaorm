@@ -7,6 +7,7 @@ import be.bittich.dynaorm.exception.IOCContainerException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.dbutils.QueryRunner;
 
 /**
  *
@@ -17,6 +18,10 @@ public class BasicContainer implements Serializable {
     private static final long serialVersionUID = -7812658198232446401L;
 
     private static BasicContainer container;
+
+    public static QueryRunner getContainer(String queryRunner) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
     private final Map<String, Bean> inject = new HashMap();
 

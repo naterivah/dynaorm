@@ -5,9 +5,9 @@
  */
 package be.bittich.dynaorm.repository;
 
+import be.bittich.dynaorm.entity.Entity;
 import be.bittich.dynaorm.entity.PrimaryKey;
 import java.io.Serializable;
-import java.sql.ResultSet;
 import java.util.List;
 import org.apache.commons.dbutils.ResultSetHandler;
 
@@ -32,5 +32,4 @@ public interface DynaRepository<T> extends Serializable {
 
     ResultSetHandler<T> getHandler();
     
-    ResultSet getResultSet();
 }

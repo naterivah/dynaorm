@@ -9,16 +9,37 @@ import java.util.Map;
  */
 public interface SystemConstant {
 
-    //Driver
+    /**
+     * *
+     * Drivers
+     */
     public static final String DRIVER_MYSQL = "com.mysql.jdbc.Driver";
     public static final String DRIVER_HSQL = "org.hsqldb.jdbcDriver";
-    //add your own driver here
+
+    /**
+     * Supported Drivers
+     */
+    public static final String SUPPORTED_MYSQL = "mysql";
+    public static final String SUPPORTED_HSQL = "hsql";
+
     public static final Map<String, String> DRIVER_NAME = new HashMap<String, String>() {
         private static final long serialVersionUID = 1L;
+
         {
-            put("mysql", DRIVER_MYSQL);
-            put("hsqldb", DRIVER_HSQL);
+            put(SUPPORTED_MYSQL, DRIVER_MYSQL);
+            put(SUPPORTED_HSQL, DRIVER_HSQL);
+
+        }
+
+    };
+    public static final Map<String, String> DIALECT = new HashMap<String, String>() {
+        private static final long serialVersionUID = 1L;
+
+        {
+            put(SUPPORTED_MYSQL, "be.bittich.dynaorm.dialect.MySQLDialect");
+            put(SUPPORTED_HSQL, "be.bittich.dynaorm.dialect.HSQLDialect");
 
         }
     };
+
 }

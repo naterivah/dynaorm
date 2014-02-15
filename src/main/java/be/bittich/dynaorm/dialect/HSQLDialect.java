@@ -10,7 +10,7 @@ package be.bittich.dynaorm.dialect;
  *
  * @author Nordine
  */
-public class MySQLDialect implements Dialect{
+public class HSQLDialect implements Dialect{
 
     @Override
     public String select() {

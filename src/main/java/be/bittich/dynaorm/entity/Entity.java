@@ -7,12 +7,13 @@
 package be.bittich.dynaorm.entity;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  *
  * @author Nordine
  */
-public interface Entity extends Serializable,PrimaryKey {
+public interface Entity extends Serializable {
     String getTableName();
-    
+    List<PrimaryKey> getPrimaryKeys();
 }

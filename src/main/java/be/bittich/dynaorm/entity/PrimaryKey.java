@@ -16,5 +16,6 @@ import java.io.Serializable;
 public interface PrimaryKey<T> extends Serializable{
     T getIdValue();
     String getIdLabel();
+    Class<T> getClazz();
     
 }
