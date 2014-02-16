@@ -38,9 +38,16 @@ public class TestDao {
 
     @Before
     public void setup() {
+        //get an inputStream
         InputStream input = getClass().getClassLoader().getResourceAsStream("dbconfig.properties");
+        
+        //load the properties
         Properties dbProperties = loadProperties(input);
-        BasicConfigurationBean.builder(dbProperties);
+        
+        //initialize the container
+        BasicConfigurationBean.buildContainer(dbProperties);
+        
+        //register the dao's to the basic container
         BasicConfigurationBean.registerBean("daoCity", new DAOCity());
     }
 

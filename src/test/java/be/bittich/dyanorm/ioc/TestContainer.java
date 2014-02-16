@@ -45,7 +45,7 @@ public class TestContainer {
     public void setup() {
         InputStream input = getClass().getClassLoader().getResourceAsStream("dbconfig.properties");
         Properties dbProperties = loadProperties(input);
-        BasicConfigurationBean.builder(dbProperties);
+        BasicConfigurationBean.buildContainer(dbProperties);
     }
 
     @Test

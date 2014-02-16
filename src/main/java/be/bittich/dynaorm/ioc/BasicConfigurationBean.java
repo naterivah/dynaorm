@@ -39,13 +39,13 @@ public class BasicConfigurationBean implements Serializable {
     private static final long serialVersionUID = -4279720585191618511L;
 
     /**
-     * BeanBuilder. if you want to add new Bean to the container, it would be
-     * better to extends BasicConfigurationBean and configure your beans inside
-     * If you do that, do not forget to override the builder method and call
-     * super()
+     * Build the container with the mininmum required configuration bean.
+     * if you want to add new Bean to the container, utilize the registerBean
+     * method.
+
      * @param dbProperties
      */
-    public static void builder(Properties dbProperties) {
+    public static void buildContainer(Properties dbProperties) {
         configureConn(dbProperties);
         configureQueryRunner();
     }

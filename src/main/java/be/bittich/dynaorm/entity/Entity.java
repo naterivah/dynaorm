@@ -17,7 +17,6 @@
 package be.bittich.dynaorm.entity;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  *
