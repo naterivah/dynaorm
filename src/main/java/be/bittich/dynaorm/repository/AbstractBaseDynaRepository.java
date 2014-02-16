@@ -20,12 +20,15 @@ import be.bittich.dynaorm.annotation.TableFromDB;
 import be.bittich.dynaorm.core.AnnotationProcessor;
 import be.bittich.dynaorm.dialect.Dialect;
 import static be.bittich.dynaorm.dialect.StringQueryBuilder.conditionPrimaryKeysBuilder;
-import be.bittich.dynaorm.exception.BeanNotFoundException;
+import be.bittich.dynaorm.exception.ColumnNotFoundException;
 import be.bittich.dynaorm.exception.EntityDoesNotExistException;
 import be.bittich.dynaorm.exception.RequestInvalidException;
+import be.bittich.dynaorm.ioc.BasicConfigurationBean;
 import static be.bittich.dynaorm.ioc.BasicContainer.getContainer;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +53,7 @@ public class AbstractBaseDynaRepository<T> implements DynaRepository<T> {
     private final Class<T> clazz;
     protected QueryRunner runner;
     protected Dialect dialect;
-    private final String tableName;
+    protected TableColumn tableColumn;
 
     private Class<T> getClazz() {
         Class<T> clazzz = (Class<T>) ((ParameterizedType) (getClass()
@@ -65,25 +68,19 @@ public class AbstractBaseDynaRepository<T> implements DynaRepository<T> {
      */
     protected AbstractBaseDynaRepository() {
         clazz = getClazz();
-      
-            TableFromDB table = AnnotationProcessor.getAnnotationType(clazz, TableFromDB.class);
-            if (table != null && !isEmpty(table.tableName())) {
-                tableName = table.tableName();
-            } else {
-                // default tableName 
-                tableName = clazz.getSimpleName().toUpperCase();
-            }
-            runner = getContainer().injectSafely("queryRunner");
-            dialect = getContainer().injectSafely("dialect");
-        
+        configure();
+    }
 
+    @Override
+    public TableColumn getTableColumn() {
+        return tableColumn;
     }
 
     @Override
     public List findAll() {
 
         try {
-            String request = dialect.selectAll(getTableName());
+            String request = dialect.selectAll(tableColumn.getTableName());
             List<T> results = runner.query(request,
                     getListHandler());
             return results;
@@ -96,7 +93,7 @@ public class AbstractBaseDynaRepository<T> implements DynaRepository<T> {
     @Override
     public T findById(T t) {
         Map<Field, PrimaryKey> fieldPrimary = AnnotationProcessor.getAnnotedFields(t, PrimaryKey.class);
-        String req = dialect.selectAll(getTableName());
+        String req = dialect.selectAll(tableColumn.getTableName());
         try {
             KeyValue<String, List<String>> pkBuilt = conditionPrimaryKeysBuilder(t, fieldPrimary, dialect);
             req = req.concat(pkBuilt.getKey());
@@ -111,11 +108,6 @@ public class AbstractBaseDynaRepository<T> implements DynaRepository<T> {
     }
 
     @Override
-    public T update(T t) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public Boolean delete(T t) throws EntityDoesNotExistException {
         try {
             T tFromDB = this.findById(t);
@@ -123,7 +115,7 @@ public class AbstractBaseDynaRepository<T> implements DynaRepository<T> {
                 throw new EntityDoesNotExistException();
             }
             Map<Field, PrimaryKey> fieldPrimary = AnnotationProcessor.getAnnotedFields(t, PrimaryKey.class);
-            String req = dialect.delete(getTableName());
+            String req = dialect.delete(tableColumn.getTableName());
             KeyValue<String, List<String>> pkBuilt = conditionPrimaryKeysBuilder(t, fieldPrimary, dialect);
             req = req.concat(pkBuilt.getKey());
             runner.update(req, pkBuilt.getValue().toArray());
@@ -137,7 +129,26 @@ public class AbstractBaseDynaRepository<T> implements DynaRepository<T> {
     }
 
     @Override
-    public List<T> findBy(String value, String columnName) {
+    public List<T> findBy(String columnName, String value) throws ColumnNotFoundException, RequestInvalidException {
+        Integer type = tableColumn.getColumns().get(columnName);
+        if (type == null) {
+            throw new ColumnNotFoundException(String.format("Column name %s does'nt exist on the table %s", columnName, tableColumn.getTableName()));
+        }
+        String req = dialect.selectAll(tableColumn.getTableName());
+        req=dialect.where(req);
+        req = dialect.equalTo(req, columnName);
+        List<T> results = null;
+        try {
+            results = runner.query(req,
+                    getListHandler(), value);
+        } catch (SQLException ex) {
+            Logger.getLogger(AbstractBaseDynaRepository.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return results;
+    }
+
+    @Override
+    public T update(T t) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -151,9 +162,23 @@ public class AbstractBaseDynaRepository<T> implements DynaRepository<T> {
         return handler;
     }
 
-    @Override
-    public String getTableName() {
-        return tableName;
+    private void configure() {
+        runner = getContainer().injectSafely("queryRunner");
+        dialect = getContainer().injectSafely("dialect");
+        // default tableName
+        TableFromDB table = AnnotationProcessor.getAnnotationType(clazz, TableFromDB.class);
+        String tableName = table != null && !isEmpty(table.tableName()) ? table.tableName() : table.tableName();
+        tableColumn = new TableColumn(tableName);
+        try {
+            ResultSet rs = runner.getDataSource().getConnection().prepareStatement(dialect.requestForTableColumns(tableName)).executeQuery();
+            Integer nbColumns = rs.getMetaData().getColumnCount();
+            for (int i = 1; i <= nbColumns; i++) {
+                String name = rs.getMetaData().getColumnName(i);
+                int type = rs.getMetaData().getColumnType(i);
+                tableColumn.addColumn(name, type);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(AbstractBaseDynaRepository.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
-
 }

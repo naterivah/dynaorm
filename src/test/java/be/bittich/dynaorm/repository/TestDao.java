@@ -18,10 +18,13 @@ package be.bittich.dynaorm.repository;
 import static be.bittich.dynaorm.core.DynaUtils.loadProperties;
 import be.bittich.dynaorm.entity.City;
 import be.bittich.dynaorm.exception.BeanNotFoundException;
+import be.bittich.dynaorm.exception.ColumnNotFoundException;
 import be.bittich.dynaorm.exception.EntityDoesNotExistException;
+import be.bittich.dynaorm.exception.RequestInvalidException;
 import be.bittich.dynaorm.ioc.BasicConfigurationBean;
 import static be.bittich.dynaorm.ioc.BasicContainer.getContainer;
 import java.io.InputStream;
+import java.sql.Types;
 import java.util.List;
 import java.util.Properties;
 import static junit.framework.TestCase.assertNotNull;
@@ -54,22 +57,36 @@ public class TestDao {
     @Test
     public void testGetTableName() throws BeanNotFoundException {
         DynaRepository<City> repository = getContainer().inject("daoCity");
-        System.out.println(repository.getTableName());
     }
 
     @Test
-    public void testFindAll() throws BeanNotFoundException  {
+    public void testFindAll() throws BeanNotFoundException {
         DynaRepository<City> repository = getContainer().inject("daoCity");
         List<City> list = repository.findAll();
         for (City c : list) {
             System.out.println(c.getId() + ":" + c.getZip());
         }
+        TableColumn table = repository.getTableColumn();
+        for (String name : table.getColumns().keySet()) {
+            System.out.println(name);
+        }
+
+    }
+
+    @Test
+    public void testFindBy() throws ColumnNotFoundException, RequestInvalidException {
+        DynaRepository<City> repository = getContainer().injectSafely("daoCity");
+        List<City> list = repository.findBy("name", "Ganshoren");
+        for(City c:list){
+            System.out.println(c.getZip());
+        }
+
     }
 
     @Test
     @Ignore
-    public void testDao() throws BeanNotFoundException {
-        DynaRepository<City> repository = getContainer().inject("daoCity");
+    public void testDao() {
+        DynaRepository<City> repository = getContainer().injectSafely("daoCity");
         List<City> list = repository.findAll();
         assertNotNull(list);
         City city2 = new City();
@@ -85,8 +102,8 @@ public class TestDao {
 
     @Test
     @Ignore
-    public void testDelete() throws BeanNotFoundException, EntityDoesNotExistException {
-        DynaRepository<City> repository = getContainer().inject("daoCity");
+    public void testDelete() throws EntityDoesNotExistException {
+        DynaRepository<City> repository = getContainer().injectSafely("daoCity");
         City city2 = new City();
         city2.setId(3);
         boolean result = repository.delete(city2);

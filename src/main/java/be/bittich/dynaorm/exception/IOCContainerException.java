@@ -26,5 +26,9 @@ public class IOCContainerException extends Exception{
     public IOCContainerException(String msg) {
         super(msg);
     }
+
+    public IOCContainerException() {
+        super();
+    }
     
 }

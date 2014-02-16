@@ -15,28 +15,35 @@
  */
 package be.bittich.dynaorm.repository;
 
-import be.bittich.dynaorm.exception.ColumnNotFoundException;
-import be.bittich.dynaorm.exception.EntityDoesNotExistException;
-import be.bittich.dynaorm.exception.RequestInvalidException;
 import java.io.Serializable;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  * @author Nordine
- * @param <T>
  */
-public interface DynaRepository<T> extends Serializable {
+public class TableColumn implements Serializable {
 
-    List<T> findAll();
+    private static final long serialVersionUID = 2442984702019905389L;
+    private final String tableName;
+    //type constant from Types class
+    private final Map<String, Integer> columns = new HashMap();
 
-    T findById(T t);
+    public String getTableName() {
 
-    T update(T t);
+        return tableName;
+    }
 
-    Boolean delete(T t) throws EntityDoesNotExistException;
+    public TableColumn(String tableName) {
+        this.tableName = tableName;
+    }
 
-    List<T> findBy(String columnName,String value ) throws ColumnNotFoundException,RequestInvalidException;
+    public Map<String, Integer> getColumns() {
+        return columns;
+    }
 
-    TableColumn getTableColumn();
+    public void addColumn(String columnName, Integer type) {
+        columns.put(columnName, type);
+    }
 }

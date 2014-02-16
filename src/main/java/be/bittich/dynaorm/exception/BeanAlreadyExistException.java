@@ -26,5 +26,9 @@ public class BeanAlreadyExistException extends Exception{
     public BeanAlreadyExistException(String msg) {
         super(msg);
     }
+
+    public BeanAlreadyExistException() {
+        super();
+    }
     
 }

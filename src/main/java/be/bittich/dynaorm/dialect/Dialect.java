@@ -42,4 +42,6 @@ public interface Dialect {
     String delete(String tableName);
 
     String type();
+    
+    String requestForTableColumns(String tableName);
 }

@@ -13,30 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package be.bittich.dynaorm.repository;
 
-import be.bittich.dynaorm.exception.ColumnNotFoundException;
-import be.bittich.dynaorm.exception.EntityDoesNotExistException;
-import be.bittich.dynaorm.exception.RequestInvalidException;
-import java.io.Serializable;
-import java.util.List;
+package be.bittich.dynaorm.exception;
 
 /**
  *
  * @author Nordine
- * @param <T>
  */
-public interface DynaRepository<T> extends Serializable {
+public class ColumnNotFoundException extends Exception{
+    private static final long serialVersionUID = -3310115588598965890L;
 
-    List<T> findAll();
+    public ColumnNotFoundException(String msg) {
+        super(msg);
+    }
 
-    T findById(T t);
-
-    T update(T t);
-
-    Boolean delete(T t) throws EntityDoesNotExistException;
-
-    List<T> findBy(String columnName,String value ) throws ColumnNotFoundException,RequestInvalidException;
-
-    TableColumn getTableColumn();
+    public ColumnNotFoundException() {
+        super();
+    }
+    
 }

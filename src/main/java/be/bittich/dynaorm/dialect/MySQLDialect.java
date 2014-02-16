@@ -30,12 +30,12 @@ public class MySQLDialect implements Dialect {
     public static final String ALL = "* ";
     public static final String AND = "AND ";
     public static final String LIKE = "LIKE ";
-    public static final String STARTLIKE = "LIKE %{} ";
+    public static final String STARTLIKE = "LIKE % ";
     public static final String ENDLIKE = "LIKE %{} ";
-    public static final String EXACTLYLIKE = "LIKE %{}% ";
+    public static final String EXACTLYLIKE = "LIKE % % ";
     public static final String EQUALITY = "= ";
     public static final String DELETE = "DELETE ";
-
+    public static final String REQ_FOR_TABLE_COLUMNS="SELECT * FROM %s WHERE 1=0";
     public final String orderBy = "ORDER BY ";
 
     @Override
@@ -87,6 +87,11 @@ public class MySQLDialect implements Dialect {
     public String delete(String tableName) {
           return DELETE.concat(this.from(tableName));
 
+    }
+
+    @Override
+    public String requestForTableColumns(String tableName) {
+        return String.format(REQ_FOR_TABLE_COLUMNS,tableName);
     }
 
 }
