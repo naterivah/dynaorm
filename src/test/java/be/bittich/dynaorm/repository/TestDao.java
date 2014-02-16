@@ -47,7 +47,7 @@ public class TestDao {
         List<City> list = repository.findAll();
         assertNotNull(list);
         for(City c: list){
-            System.out.println(c.getName());
+            System.out.println(c.getName()+":"+c.getZip());
         }
     }
 }
