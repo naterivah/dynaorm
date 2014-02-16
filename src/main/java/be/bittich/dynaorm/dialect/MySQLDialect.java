@@ -34,11 +34,13 @@ public class MySQLDialect implements Dialect {
     public static final String ENDLIKE = "LIKE %{} ";
     public static final String EXACTLYLIKE = "LIKE %{}% ";
     public static final String EQUALITY = "= ";
+    public static final String DELETE = "DELETE ";
+
     public final String orderBy = "ORDER BY ";
 
     @Override
     public String selectAll(String tableName) {
-        return SELECT.concat(ALL).concat(FROM).concat(tableName).concat(" ");
+        return SELECT.concat(ALL).concat(this.from(tableName));
     }
 
     @Override
@@ -50,13 +52,15 @@ public class MySQLDialect implements Dialect {
     public String andWhere(String request) {
         return request.concat(AND);
     }
+
     @Override
-    public String equalTo(String request, String label) throws RequestInvalidException{
-        if(label==null || isEmpty(label)){
+    public String equalTo(String request, String label) throws RequestInvalidException {
+        if (label == null || isEmpty(label)) {
             throw new RequestInvalidException("Label or Value for the request is empty or null");
         }
         return request.concat(label).concat(" ").concat(EQUALITY).concat(REPLACEMENT_VALUE);
     }
+
     @Override
     public String insert() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -67,14 +71,22 @@ public class MySQLDialect implements Dialect {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
-    public String delete() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+
 
     @Override
     public String type() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String from(String tableName) {
+        return FROM.concat(tableName).concat(" ");
+    }
+
+    @Override
+    public String delete(String tableName) {
+          return DELETE.concat(this.from(tableName));
+
     }
 
 }

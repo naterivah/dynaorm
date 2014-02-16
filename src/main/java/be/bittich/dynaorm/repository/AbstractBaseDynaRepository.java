@@ -18,18 +18,20 @@ package be.bittich.dynaorm.repository;
 import be.bittich.dynaorm.annotation.PrimaryKey;
 import be.bittich.dynaorm.core.AnnotationProcessor;
 import be.bittich.dynaorm.dialect.Dialect;
+import static be.bittich.dynaorm.dialect.StringQueryBuilder.conditionPrimaryKeysBuilder;
 import be.bittich.dynaorm.entity.Entity;
 import be.bittich.dynaorm.exception.BeanNotFoundException;
+import be.bittich.dynaorm.exception.EntityDoesNotExistException;
 import be.bittich.dynaorm.exception.RequestInvalidException;
 import static be.bittich.dynaorm.ioc.BasicContainer.getContainer;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.sql.SQLException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.collections4.KeyValue;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanHandler;
@@ -91,31 +93,15 @@ public class AbstractBaseDynaRepository<T extends Entity> implements DynaReposit
     public T findById(T t) {
         Map<Field, PrimaryKey> fieldPrimary = AnnotationProcessor.getAnnotedFields(t, PrimaryKey.class);
         String req = dialect.selectAll(TENTITY.getTableName());
-        boolean firstIteration = true;
-        List<String> parameters= new LinkedList();
-        for (Field field : fieldPrimary.keySet()) {
-            try {
-                String label = "".equals(fieldPrimary.get(field).label()) ? field.getName() : fieldPrimary.get(field).label();
-                String value = AnnotationProcessor.getFieldValue(field.getName(), t);
-                if (firstIteration) {
-                    req = dialect.where(req);
-                    firstIteration = false;
-                } else {
-                    req = dialect.andWhere(req);
-                }
-                req = dialect.equalTo(req, label);
-                parameters.add(value);
-            } catch (RequestInvalidException ex) {
-                Logger.getLogger(AbstractBaseDynaRepository.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }
-
         try {
-            T result = runner.query(req, getHandler(),parameters.toArray());
+            KeyValue<String, List<String>> pkBuilt = conditionPrimaryKeysBuilder(t, fieldPrimary, dialect);
+            req = req.concat(pkBuilt.getKey());
+            T result = runner.query(req, getHandler(), pkBuilt.getValue().toArray());
             return result;
         } catch (SQLException ex) {
             Logger.getLogger(AbstractBaseDynaRepository.class.getName()).log(Level.SEVERE, ex.getSQLState(), ex);
+        } catch (RequestInvalidException ex) {
+            Logger.getLogger(AbstractBaseDynaRepository.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
@@ -126,8 +112,24 @@ public class AbstractBaseDynaRepository<T extends Entity> implements DynaReposit
     }
 
     @Override
-    public T delete(T t) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Boolean delete(T t) throws EntityDoesNotExistException {
+        try {
+            T tFromDB = this.findById(t);
+            if (tFromDB == null) {
+                throw new EntityDoesNotExistException();
+            }
+            Map<Field, PrimaryKey> fieldPrimary = AnnotationProcessor.getAnnotedFields(t, PrimaryKey.class);
+            String req = dialect.delete(TENTITY.getTableName());
+            KeyValue<String, List<String>> pkBuilt = conditionPrimaryKeysBuilder(t, fieldPrimary, dialect);
+            req = req.concat(pkBuilt.getKey());
+            runner.update(req, pkBuilt.getValue().toArray());
+            return true;
+        } catch (RequestInvalidException ex) {
+            Logger.getLogger(AbstractBaseDynaRepository.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(AbstractBaseDynaRepository.class.getName()).log(Level.SEVERE, ex.getSQLState(), ex);
+        }
+        return false;
     }
 
     @Override

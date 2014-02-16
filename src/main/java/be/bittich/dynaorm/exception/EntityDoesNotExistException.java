@@ -13,33 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package be.bittich.dynaorm.dialect;
 
-import be.bittich.dynaorm.exception.RequestInvalidException;
+package be.bittich.dynaorm.exception;
 
 /**
  *
  * @author Nordine
  */
-public interface Dialect {
+public class EntityDoesNotExistException extends Exception{
+    private static final long serialVersionUID = -3310115588598965890L;
 
-    static final String REPLACEMENT_VALUE = "? ";
+    public EntityDoesNotExistException(String msg) {
+        super(msg);
+    }
 
-    String selectAll(String tableName);
+    public EntityDoesNotExistException() {
+        super();
+    }
     
-    String from(String tableName);
-
-    String equalTo(String request, String label) throws RequestInvalidException;
-
-    String andWhere(String request);
-
-    String where(String request);
-
-    String insert();
-
-    String update();
-
-    String delete(String tableName);
-
-    String type();
 }

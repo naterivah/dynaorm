@@ -15,6 +15,7 @@
  */
 package be.bittich.dynaorm.repository;
 
+import be.bittich.dynaorm.exception.EntityDoesNotExistException;
 import java.io.Serializable;
 import java.util.List;
 import org.apache.commons.dbutils.ResultSetHandler;
@@ -28,11 +29,11 @@ public interface DynaRepository<T> extends Serializable {
 
     List<T> findAll();
 
-    T findById(T t);
+    T findById(T t) ;
 
     T update(T t);
 
-    T delete(T t);
+    Boolean delete(T t) throws EntityDoesNotExistException;
 
     List<T> findBy(String value, String columnName);
 

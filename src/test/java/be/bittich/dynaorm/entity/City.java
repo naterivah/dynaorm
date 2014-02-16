@@ -30,7 +30,6 @@ public class City implements Entity {
     private static final long serialVersionUID = 9084121880626161360L;
     @PrimaryKey(label = "id")
     private int id;
-    @PrimaryKey
     private String zip;
     private String name;
 
