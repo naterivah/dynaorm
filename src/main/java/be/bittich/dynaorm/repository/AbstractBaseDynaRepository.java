@@ -23,11 +23,9 @@ import static be.bittich.dynaorm.dialect.StringQueryBuilder.conditionPrimaryKeys
 import be.bittich.dynaorm.exception.ColumnNotFoundException;
 import be.bittich.dynaorm.exception.EntityDoesNotExistException;
 import be.bittich.dynaorm.exception.RequestInvalidException;
-import be.bittich.dynaorm.ioc.BasicConfigurationBean;
 import static be.bittich.dynaorm.ioc.BasicContainer.getContainer;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
-import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
