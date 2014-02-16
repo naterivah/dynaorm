@@ -24,7 +24,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
 import static junit.framework.TestCase.assertNotNull;
-import org.junit.Before; 
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -43,11 +43,17 @@ public class TestDao {
 
     @Test
     public void testDao() throws BeanNotFoundException {
-        DynaRepository repository= getContainer().inject("daoCity");
+        DynaRepository<City> repository = getContainer().inject("daoCity");
         List<City> list = repository.findAll();
         assertNotNull(list);
-        for(City c: list){
-            System.out.println(c.getName()+":"+c.getZip());
+        City city2 = new City();
+        city2.setId(4);
+        city2.setZip("1090");
+        for (City c : list) {
+            System.out.println(c.getId() + ":" + c.getZip());
         }
+        city2 = repository.findById(city2);
+        System.out.println(city2.getId() + ":" + city2.getZip());
+
     }
 }

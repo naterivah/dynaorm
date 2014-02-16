@@ -25,5 +25,4 @@ import java.util.List;
  */
 public interface Entity extends Serializable {
     String getTableName();
-    List<PrimaryKey> getPrimaryKeys();
 }

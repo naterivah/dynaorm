@@ -15,8 +15,7 @@
  */
 package be.bittich.dynaorm.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import be.bittich.dynaorm.annotation.PrimaryKey;
 
 /**
  *
@@ -29,20 +28,19 @@ public class City implements Entity {
     }
 
     private static final long serialVersionUID = 9084121880626161360L;
-    private int id;
+    @PrimaryKey(label = "id")
+    private  int id;
+    @PrimaryKey
     private String zip;
     private String name;
-    private final List<PrimaryKey> pkz = new ArrayList();
 
     public City(int id, String zip, String name) {
         super();
         this.id = id;
-        PrimaryKey<Integer> pk = new BasicPrimaryKey(id, "id");
-        pkz.add(pk);
         this.zip = zip;
         this.name = name;
     }
-
+  
     public int getId() {
         return id;
     }
@@ -70,11 +68,6 @@ public class City implements Entity {
     @Override
     public String getTableName() {
         return "city";
-    }
-
-    @Override
-    public List<PrimaryKey> getPrimaryKeys() {
-        return pkz;
     }
 
 }

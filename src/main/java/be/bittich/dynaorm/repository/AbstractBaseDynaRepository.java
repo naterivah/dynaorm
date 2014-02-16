@@ -15,27 +15,31 @@
  */
 package be.bittich.dynaorm.repository;
 
+import be.bittich.dynaorm.annotation.PrimaryKey;
+import be.bittich.dynaorm.core.AnnotationProcessor;
 import be.bittich.dynaorm.dialect.Dialect;
 import be.bittich.dynaorm.entity.Entity;
-import be.bittich.dynaorm.entity.PrimaryKey;
 import be.bittich.dynaorm.exception.BeanNotFoundException;
 import static be.bittich.dynaorm.ioc.BasicContainer.getContainer;
+import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  *
  * @author Nordine
  * @param <T>
  */
-public class AbstractBaseDynaRepository<T extends Entity> implements DynaRepository {
+public class AbstractBaseDynaRepository<T extends Entity> implements DynaRepository<T> {
 
     private static final long serialVersionUID = 1L;
     protected static final Logger LOG = Logger.getLogger("AbstractBaseDAO");
@@ -94,17 +98,39 @@ public class AbstractBaseDynaRepository<T extends Entity> implements DynaReposit
     }
 
     @Override
-    public T findById(PrimaryKey... pk) {
+    public T findById(T t) {
+        Map<Field, PrimaryKey> fieldPrimary = AnnotationProcessor.getAnnotedFields(t, PrimaryKey.class);
+        String req = "SELECT * from " + t.getTableName() + " where ";
+        boolean firstIter = true;
+        for (Field field : fieldPrimary.keySet()) {
+            String label = fieldPrimary.get(field).label();
+            if (isEmpty(label)) {
+                label = field.getName();
+            }
+            if (firstIter) {
+                req += label + " = " + AnnotationProcessor.getFieldValue(field.getName(), t);
+                firstIter = false;
+            } else {
+                req += " and " + label + " = " + AnnotationProcessor.getFieldValue(field.getName(), t);
+            }
+        }
+        System.out.println(req);
+        try {
+            T result = runner.query(req, getHandler());
+            return result;
+        } catch (SQLException ex) {
+            Logger.getLogger(AbstractBaseDynaRepository.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    @Override
+    public T update(T t) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public Object update(Object t) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Object delete(Object t) {
+    public T delete(T t) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -112,4 +138,5 @@ public class AbstractBaseDynaRepository<T extends Entity> implements DynaReposit
     public List findBy(String value, String columnName) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
 }

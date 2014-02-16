@@ -13,19 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package be.bittich.dynaorm.annotation;
 
-package be.bittich.dynaorm.entity;
-
-import java.io.Serializable;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  *
  * @author Nordine
- * @param <T>
  */
-public interface PrimaryKey<T> extends Serializable{
-    T getIdValue();
-    String getIdLabel();
-    Class<T> getClazz();
-    
+@Target({ElementType.FIELD, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface PrimaryKey {
+
+    String label() default "";
 }

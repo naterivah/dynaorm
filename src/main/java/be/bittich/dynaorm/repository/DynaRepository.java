@@ -15,7 +15,6 @@
  */
 package be.bittich.dynaorm.repository;
 
-import be.bittich.dynaorm.entity.PrimaryKey;
 import java.io.Serializable;
 import java.util.List;
 import org.apache.commons.dbutils.ResultSetHandler;
@@ -29,7 +28,7 @@ public interface DynaRepository<T> extends Serializable {
 
     List<T> findAll();
 
-    T findById(PrimaryKey... pk);
+    T findById(T t);
 
     T update(T t);
 
