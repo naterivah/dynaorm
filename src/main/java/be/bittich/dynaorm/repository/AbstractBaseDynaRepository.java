@@ -20,7 +20,6 @@ import be.bittich.dynaorm.annotation.TableFromDB;
 import be.bittich.dynaorm.core.AnnotationProcessor;
 import be.bittich.dynaorm.dialect.Dialect;
 import static be.bittich.dynaorm.dialect.StringQueryBuilder.conditionPrimaryKeysBuilder;
-import be.bittich.dynaorm.entity.Entity;
 import be.bittich.dynaorm.exception.BeanNotFoundException;
 import be.bittich.dynaorm.exception.EntityDoesNotExistException;
 import be.bittich.dynaorm.exception.RequestInvalidException;
@@ -44,16 +43,14 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
  * @author Nordine
  * @param <T>
  */
-public class AbstractBaseDynaRepository<T extends Entity> implements DynaRepository<T> {
+public class AbstractBaseDynaRepository<T> implements DynaRepository<T> {
 
     private static final long serialVersionUID = 1L;
     protected static final Logger LOG = Logger.getLogger("AbstractBaseDAO");
     private final Class<T> clazz;
     protected QueryRunner runner;
     protected Dialect dialect;
-    private String tableName;
-    
-    private T TENTITY;
+    private final String tableName;
 
     private Class<T> getClazz() {
         Class<T> clazzz = (Class<T>) ((ParameterizedType) (getClass()
@@ -68,7 +65,7 @@ public class AbstractBaseDynaRepository<T extends Entity> implements DynaReposit
      */
     protected AbstractBaseDynaRepository() {
         clazz = getClazz();
-        try {
+      
             TableFromDB table = AnnotationProcessor.getAnnotationType(clazz, TableFromDB.class);
             if (table != null && !isEmpty(table.tableName())) {
                 tableName = table.tableName();
@@ -76,12 +73,9 @@ public class AbstractBaseDynaRepository<T extends Entity> implements DynaReposit
                 // default tableName 
                 tableName = clazz.getSimpleName().toUpperCase();
             }
-            TENTITY = clazz.newInstance();
-            runner = getContainer().inject("queryRunner");
-            dialect = getContainer().inject("dialect");
-        } catch (InstantiationException | IllegalAccessException | BeanNotFoundException ex) {
-            Logger.getLogger(AbstractBaseDynaRepository.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            runner = getContainer().injectSafely("queryRunner");
+            dialect = getContainer().injectSafely("dialect");
+        
 
     }
 
@@ -89,7 +83,7 @@ public class AbstractBaseDynaRepository<T extends Entity> implements DynaReposit
     public List findAll() {
 
         try {
-            String request = dialect.selectAll(TENTITY.getTableName());
+            String request = dialect.selectAll(getTableName());
             List<T> results = runner.query(request,
                     getListHandler());
             return results;
@@ -102,7 +96,7 @@ public class AbstractBaseDynaRepository<T extends Entity> implements DynaReposit
     @Override
     public T findById(T t) {
         Map<Field, PrimaryKey> fieldPrimary = AnnotationProcessor.getAnnotedFields(t, PrimaryKey.class);
-        String req = dialect.selectAll(TENTITY.getTableName());
+        String req = dialect.selectAll(getTableName());
         try {
             KeyValue<String, List<String>> pkBuilt = conditionPrimaryKeysBuilder(t, fieldPrimary, dialect);
             req = req.concat(pkBuilt.getKey());
@@ -129,7 +123,7 @@ public class AbstractBaseDynaRepository<T extends Entity> implements DynaReposit
                 throw new EntityDoesNotExistException();
             }
             Map<Field, PrimaryKey> fieldPrimary = AnnotationProcessor.getAnnotedFields(t, PrimaryKey.class);
-            String req = dialect.delete(TENTITY.getTableName());
+            String req = dialect.delete(getTableName());
             KeyValue<String, List<String>> pkBuilt = conditionPrimaryKeysBuilder(t, fieldPrimary, dialect);
             req = req.concat(pkBuilt.getKey());
             runner.update(req, pkBuilt.getValue().toArray());
@@ -156,9 +150,9 @@ public class AbstractBaseDynaRepository<T extends Entity> implements DynaReposit
         ResultSetHandler<T> handler = new BeanHandler(clazz);
         return handler;
     }
-    
+
     @Override
-    public String getTableName(){
+    public String getTableName() {
         return tableName;
     }
 

@@ -17,16 +17,16 @@ package be.bittich.dynaorm.entity;
 
 import be.bittich.dynaorm.annotation.PrimaryKey;
 import be.bittich.dynaorm.annotation.TableFromDB;
+import java.io.Serializable;
 
 /**
  *
  * @author Nordine
  */
-
-public class City implements Entity {
+@TableFromDB(tableName = "city")
+public class City implements Serializable{
 
     public City() {
-        super();
     }
 
     private static final long serialVersionUID = 9084121880626161360L;
@@ -66,9 +66,6 @@ public class City implements Entity {
         this.name = name;
     }
 
-    @Override
-    public String getTableName() {
-        return "city";
-    }
+
 
 }

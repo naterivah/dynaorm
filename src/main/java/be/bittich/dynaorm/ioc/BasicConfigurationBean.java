@@ -46,6 +46,7 @@ public class BasicConfigurationBean implements Serializable {
      * @param dbProperties
      */
     public static void buildContainer(Properties dbProperties) {
+  
         configureConn(dbProperties);
         configureQueryRunner();
     }
@@ -96,7 +97,7 @@ public class BasicConfigurationBean implements Serializable {
     }
 
     /**
-     * Register a new bean
+     * Register a new bean, if the bean already exists, nothing happens
      *
      * @param <T>
      * @param t
@@ -107,7 +108,7 @@ public class BasicConfigurationBean implements Serializable {
         try {
             getContainer().addBean(bean);
         } catch (BeanAlreadyExistException | IOCContainerException ex) {
-            Logger.getLogger(BasicConfigurationBean.class.getName()).log(Level.SEVERE, null, ex);
+           
         }
     }
 }

@@ -21,6 +21,8 @@ import be.bittich.dynaorm.exception.IOCContainerException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -32,14 +34,15 @@ public class BasicContainer implements Serializable {
 
     private static BasicContainer container;
 
-    private final Map<String, Bean> inject = new HashMap();
+    private final Map<String, Bean> containerBeans = new HashMap();
 
     private BasicContainer() {
 
     }
-    
+
     /**
      * Return the container unique instance
+     *
      * @return the container
      */
     public static BasicContainer getContainer() {
@@ -51,48 +54,66 @@ public class BasicContainer implements Serializable {
 
     /**
      * Add a bean to the container
+     *
      * @param <T>
      * @param bean
      * @throws BeanAlreadyExistException
-     * @throws IOCContainerException 
+     * @throws IOCContainerException
      */
     public <T> void addBean(Bean<T> bean) throws BeanAlreadyExistException, IOCContainerException {
-        if (inject.containsValue(bean)) {
+        if (containerBeans.containsValue(bean)) {
             throw new BeanAlreadyExistException("IOC exception: bean already exists");
         }
-        if (inject.containsKey(bean.getId())) {
+        if (containerBeans.containsKey(bean.getId())) {
             throw new IOCContainerException("IOC exception: the id should be unique!");
-
         }
-        this.inject.put(bean.getId(), bean);
+        this.containerBeans.put(bean.getId(), bean);
     }
 
     /**
      * Remove a bean from the container
+     *
      * @param <T>
      * @param id
-     * @return 
+     * @return
      */
     public <T> Bean<T> releaseBean(String id) {
-        return inject.remove(id);
+        return containerBeans.remove(id);
 
     }
 
     /**
-     * The bean is injected by the container
+     * The bean is containerBeansed by the container
+     *
      * @param <T>
      * @param id
      * @return
-     * @throws BeanNotFoundException 
+     * @throws BeanNotFoundException
      */
     public <T> T inject(String id) throws BeanNotFoundException {
-        if (inject.get(id) == null) {
+        if (containerBeans.get(id) == null) {
             throw new BeanNotFoundException("Bean not found");
         }
-        Bean<T> bean = inject.get(id);
+        Bean<T> bean = containerBeans.get(id);
         Class<T> clazz = bean.getClazz();
-        return clazz.cast(inject.get(id).getBean());
+        return clazz.cast(containerBeans.get(id).getBean());
 
+    }
+
+    /**
+     * Safely containerBeans a bean from the container. If the bean doesn't exist, it returns null
+     * @param <T>
+     * @param id
+     * @return bean
+     */
+    public <T> T injectSafely(String id) {
+        T bean=null;
+        try {
+            bean = this.inject(id);
+        } catch (BeanNotFoundException ex) {
+            Logger.getLogger(BasicContainer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return bean;
     }
 
 }

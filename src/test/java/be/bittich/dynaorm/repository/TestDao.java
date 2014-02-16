@@ -46,15 +46,24 @@ public class TestDao {
 
         //initialize the container
         BasicConfigurationBean.buildContainer(dbProperties);
-
         //register the dao's to the basic container
         BasicConfigurationBean.registerBean("daoCity", new DAOCity());
+
     }
 
     @Test
     public void testGetTableName() throws BeanNotFoundException {
         DynaRepository<City> repository = getContainer().inject("daoCity");
         System.out.println(repository.getTableName());
+    }
+
+    @Test
+    public void testFindAll() throws BeanNotFoundException  {
+        DynaRepository<City> repository = getContainer().inject("daoCity");
+        List<City> list = repository.findAll();
+        for (City c : list) {
+            System.out.println(c.getId() + ":" + c.getZip());
+        }
     }
 
     @Test
