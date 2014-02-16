@@ -15,6 +15,8 @@
  */
 package be.bittich.dynaorm.dialect;
 
+import be.bittich.dynaorm.exception.RequestInvalidException;
+
 /**
  *
  * @author Nordine
@@ -22,7 +24,22 @@ package be.bittich.dynaorm.dialect;
 public class HSQLDialect implements Dialect{
 
     @Override
-    public String select() {
+    public String selectAll(String tableName) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String equalTo(String request, String label) throws RequestInvalidException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String andWhere(String request) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String where(String request) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -45,5 +62,7 @@ public class HSQLDialect implements Dialect{
     public String type() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+ 
    
 }

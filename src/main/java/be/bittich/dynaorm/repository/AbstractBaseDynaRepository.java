@@ -20,10 +20,12 @@ import be.bittich.dynaorm.core.AnnotationProcessor;
 import be.bittich.dynaorm.dialect.Dialect;
 import be.bittich.dynaorm.entity.Entity;
 import be.bittich.dynaorm.exception.BeanNotFoundException;
+import be.bittich.dynaorm.exception.RequestInvalidException;
 import static be.bittich.dynaorm.ioc.BasicContainer.getContainer;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.sql.SQLException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -32,7 +34,6 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  *
@@ -76,9 +77,10 @@ public class AbstractBaseDynaRepository<T extends Entity> implements DynaReposit
     public List findAll() {
 
         try {
-            List<T> object = runner.query("SELECT * FROM " + TENTITY.getTableName(),
+            String request = dialect.selectAll(TENTITY.getTableName());
+            List<T> results = runner.query(request,
                     getListHandler());
-            return object;
+            return results;
         } catch (SQLException e) {
             LOG.log(Level.INFO, "erreur : {0}", e.getMessage());
         }
@@ -86,40 +88,34 @@ public class AbstractBaseDynaRepository<T extends Entity> implements DynaReposit
     }
 
     @Override
-    public ResultSetHandler<List<T>> getListHandler() {
-        ResultSetHandler<List<T>> handler = new BeanListHandler(clazz);
-        return handler;
-    }
-
-    @Override
-    public ResultSetHandler<T> getHandler() {
-        ResultSetHandler<T> handler = new BeanHandler(clazz);
-        return handler;
-    }
-
-    @Override
     public T findById(T t) {
         Map<Field, PrimaryKey> fieldPrimary = AnnotationProcessor.getAnnotedFields(t, PrimaryKey.class);
-        String req = "SELECT * from " + t.getTableName() + " where ";
-        boolean firstIter = true;
+        String req = dialect.selectAll(TENTITY.getTableName());
+        boolean firstIteration = true;
+        List<String> parameters= new LinkedList();
         for (Field field : fieldPrimary.keySet()) {
-            String label = fieldPrimary.get(field).label();
-            if (isEmpty(label)) {
-                label = field.getName();
+            try {
+                String label = "".equals(fieldPrimary.get(field).label()) ? field.getName() : fieldPrimary.get(field).label();
+                String value = AnnotationProcessor.getFieldValue(field.getName(), t);
+                if (firstIteration) {
+                    req = dialect.where(req);
+                    firstIteration = false;
+                } else {
+                    req = dialect.andWhere(req);
+                }
+                req = dialect.equalTo(req, label);
+                parameters.add(value);
+            } catch (RequestInvalidException ex) {
+                Logger.getLogger(AbstractBaseDynaRepository.class.getName()).log(Level.SEVERE, null, ex);
             }
-            if (firstIter) {
-                req += label + " = " + AnnotationProcessor.getFieldValue(field.getName(), t);
-                firstIter = false;
-            } else {
-                req += " and " + label + " = " + AnnotationProcessor.getFieldValue(field.getName(), t);
-            }
+
         }
-        System.out.println(req);
+
         try {
-            T result = runner.query(req, getHandler());
+            T result = runner.query(req, getHandler(),parameters.toArray());
             return result;
         } catch (SQLException ex) {
-            Logger.getLogger(AbstractBaseDynaRepository.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AbstractBaseDynaRepository.class.getName()).log(Level.SEVERE, ex.getSQLState(), ex);
         }
         return null;
     }
@@ -137,6 +133,18 @@ public class AbstractBaseDynaRepository<T extends Entity> implements DynaReposit
     @Override
     public List findBy(String value, String columnName) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ResultSetHandler<List<T>> getListHandler() {
+        ResultSetHandler<List<T>> handler = new BeanListHandler(clazz);
+        return handler;
+    }
+
+    @Override
+    public ResultSetHandler<T> getHandler() {
+        ResultSetHandler<T> handler = new BeanHandler(clazz);
+        return handler;
     }
 
 }

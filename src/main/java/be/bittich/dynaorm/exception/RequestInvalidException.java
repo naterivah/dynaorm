@@ -13,31 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package be.bittich.dynaorm.dialect;
-
-import be.bittich.dynaorm.exception.RequestInvalidException;
+package be.bittich.dynaorm.exception;
 
 /**
  *
  * @author Nordine
  */
-public interface Dialect {
+public class RequestInvalidException extends Exception {
 
-    static final String REPLACEMENT_VALUE = "? ";
+    private static final long serialVersionUID = -2769591541570135906L;
 
-    String selectAll(String tableName);
+    public RequestInvalidException() {
+        super();
+    }
 
-    String equalTo(String request, String label) throws RequestInvalidException;
-
-    String andWhere(String request);
-
-    String where(String request);
-
-    String insert();
-
-    String update();
-
-    String delete();
-
-    String type();
+    public RequestInvalidException(String msg) {
+        super(msg);
+    }
 }

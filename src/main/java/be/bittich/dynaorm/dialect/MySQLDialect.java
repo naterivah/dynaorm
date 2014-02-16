@@ -13,20 +13,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package be.bittich.dynaorm.dialect;
+
+import be.bittich.dynaorm.exception.RequestInvalidException;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  *
  * @author Nordine
  */
-public class MySQLDialect implements Dialect{
+public class MySQLDialect implements Dialect {
+
+    public static final String SELECT = "SELECT ";
+    public static final String FROM = "FROM ";
+    public static final String WHERE = "WHERE ";
+    public static final String ALL = "* ";
+    public static final String AND = "AND ";
+    public static final String LIKE = "LIKE ";
+    public static final String STARTLIKE = "LIKE %{} ";
+    public static final String ENDLIKE = "LIKE %{} ";
+    public static final String EXACTLYLIKE = "LIKE %{}% ";
+    public static final String EQUALITY = "= ";
+    public final String orderBy = "ORDER BY ";
 
     @Override
-    public String select() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public String selectAll(String tableName) {
+        return SELECT.concat(ALL).concat(FROM).concat(tableName).concat(" ");
     }
 
+    @Override
+    public String where(String request) {
+        return request.concat(WHERE);
+    }
+
+    @Override
+    public String andWhere(String request) {
+        return request.concat(AND);
+    }
+    @Override
+    public String equalTo(String request, String label) throws RequestInvalidException{
+        if(label==null || isEmpty(label)){
+            throw new RequestInvalidException("Label or Value for the request is empty or null");
+        }
+        return request.concat(label).concat(" ").concat(EQUALITY).concat(REPLACEMENT_VALUE);
+    }
     @Override
     public String insert() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -46,5 +76,5 @@ public class MySQLDialect implements Dialect{
     public String type() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-   
+
 }

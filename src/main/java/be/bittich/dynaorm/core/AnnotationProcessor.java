@@ -39,7 +39,7 @@ public class AnnotationProcessor {
            
 
         } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException | NullPointerException ex) {
-            Logger.getLogger(DynaUtils.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DynaUtils.class.getName()).log(Level.SEVERE, "Empty value, did you forget to set the value on your object?", ex);
         }
         return fieldValue;
     }

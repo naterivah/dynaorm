@@ -29,7 +29,7 @@ public class City implements Entity {
 
     private static final long serialVersionUID = 9084121880626161360L;
     @PrimaryKey(label = "id")
-    private  int id;
+    private int id;
     @PrimaryKey
     private String zip;
     private String name;
@@ -40,7 +40,7 @@ public class City implements Entity {
         this.zip = zip;
         this.name = name;
     }
-  
+
     public int getId() {
         return id;
     }
