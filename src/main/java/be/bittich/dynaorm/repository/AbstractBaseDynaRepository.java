@@ -133,18 +133,16 @@ public class AbstractBaseDynaRepository<T extends Entity> implements DynaReposit
     }
 
     @Override
-    public List findBy(String value, String columnName) {
+    public List<T> findBy(String value, String columnName) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
-    public ResultSetHandler<List<T>> getListHandler() {
+    protected ResultSetHandler<List<T>> getListHandler() {
         ResultSetHandler<List<T>> handler = new BeanListHandler(clazz);
         return handler;
     }
 
-    @Override
-    public ResultSetHandler<T> getHandler() {
+    protected ResultSetHandler<T> getHandler() {
         ResultSetHandler<T> handler = new BeanHandler(clazz);
         return handler;
     }

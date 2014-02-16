@@ -37,8 +37,6 @@ public interface DynaRepository<T> extends Serializable {
 
     List<T> findBy(String value, String columnName);
 
-    ResultSetHandler<List<T>> getListHandler();
 
-    ResultSetHandler<T> getHandler();
     
 }
