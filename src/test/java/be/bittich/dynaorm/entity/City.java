@@ -16,11 +16,13 @@
 package be.bittich.dynaorm.entity;
 
 import be.bittich.dynaorm.annotation.PrimaryKey;
+import be.bittich.dynaorm.annotation.TableFromDB;
 
 /**
  *
  * @author Nordine
  */
+
 public class City implements Entity {
 
     public City() {

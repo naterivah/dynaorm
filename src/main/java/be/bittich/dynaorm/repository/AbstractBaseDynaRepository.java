@@ -16,6 +16,7 @@
 package be.bittich.dynaorm.repository;
 
 import be.bittich.dynaorm.annotation.PrimaryKey;
+import be.bittich.dynaorm.annotation.TableFromDB;
 import be.bittich.dynaorm.core.AnnotationProcessor;
 import be.bittich.dynaorm.dialect.Dialect;
 import static be.bittich.dynaorm.dialect.StringQueryBuilder.conditionPrimaryKeysBuilder;
@@ -36,6 +37,7 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  *
@@ -49,7 +51,8 @@ public class AbstractBaseDynaRepository<T extends Entity> implements DynaReposit
     private final Class<T> clazz;
     protected QueryRunner runner;
     protected Dialect dialect;
-
+    private String tableName;
+    
     private T TENTITY;
 
     private Class<T> getClazz() {
@@ -66,6 +69,13 @@ public class AbstractBaseDynaRepository<T extends Entity> implements DynaReposit
     protected AbstractBaseDynaRepository() {
         clazz = getClazz();
         try {
+            TableFromDB table = AnnotationProcessor.getAnnotationType(clazz, TableFromDB.class);
+            if (table != null && !isEmpty(table.tableName())) {
+                tableName = table.tableName();
+            } else {
+                // default tableName 
+                tableName = clazz.getSimpleName().toUpperCase();
+            }
             TENTITY = clazz.newInstance();
             runner = getContainer().inject("queryRunner");
             dialect = getContainer().inject("dialect");
@@ -145,6 +155,11 @@ public class AbstractBaseDynaRepository<T extends Entity> implements DynaReposit
     protected ResultSetHandler<T> getHandler() {
         ResultSetHandler<T> handler = new BeanHandler(clazz);
         return handler;
+    }
+    
+    @Override
+    public String getTableName(){
+        return tableName;
     }
 
 }

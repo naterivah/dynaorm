@@ -13,29 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package be.bittich.dynaorm.repository;
 
-import be.bittich.dynaorm.exception.EntityDoesNotExistException;
-import java.io.Serializable;
-import java.util.List;
+package be.bittich.dynaorm.annotation;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  *
  * @author Nordine
- * @param <T>
  */
-public interface DynaRepository<T> extends Serializable {
-
-    List<T> findAll();
-
-    T findById(T t);
-
-    T update(T t);
-
-    Boolean delete(T t) throws EntityDoesNotExistException;
-
-    List<T> findBy(String value, String columnName);
-
-    String getTableName();
-
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface TableFromDB {
+    String tableName() default "";
 }

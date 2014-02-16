@@ -40,15 +40,21 @@ public class TestDao {
     public void setup() {
         //get an inputStream
         InputStream input = getClass().getClassLoader().getResourceAsStream("dbconfig.properties");
-        
+
         //load the properties
         Properties dbProperties = loadProperties(input);
-        
+
         //initialize the container
         BasicConfigurationBean.buildContainer(dbProperties);
-        
+
         //register the dao's to the basic container
         BasicConfigurationBean.registerBean("daoCity", new DAOCity());
+    }
+
+    @Test
+    public void testGetTableName() throws BeanNotFoundException {
+        DynaRepository<City> repository = getContainer().inject("daoCity");
+        System.out.println(repository.getTableName());
     }
 
     @Test
@@ -74,7 +80,7 @@ public class TestDao {
         DynaRepository<City> repository = getContainer().inject("daoCity");
         City city2 = new City();
         city2.setId(3);
-        boolean result=repository.delete(city2);
+        boolean result = repository.delete(city2);
         assertTrue(result);
         List<City> list = repository.findAll();
         for (City c : list) {

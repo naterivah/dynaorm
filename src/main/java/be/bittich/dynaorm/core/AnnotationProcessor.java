@@ -44,7 +44,9 @@ public class AnnotationProcessor {
         return fieldValue;
     }
 
+    @SuppressWarnings("empty-statement")
     public static <T, E extends Annotation> Map<Field, E> getAnnotedFields(T annotedObj, Class<E> annotation) {
+       
         Field[] fields = annotedObj.getClass().getDeclaredFields();
         Map<Field, E> filteredFields = new HashMap();
         for (Field field : fields) {
@@ -54,5 +56,9 @@ public class AnnotationProcessor {
             };
         }
         return filteredFields;
+    }
+    
+    public static <T,E extends Annotation> E getAnnotationType(Class<T>clazz,Class<E> annotation){
+        return clazz.getAnnotation(annotation);
     }
 }
