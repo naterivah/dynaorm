@@ -149,7 +149,6 @@ public class SwingGui extends javax.swing.JFrame {
         if (evt.getClickCount() == 2) {
             JTable target = (JTable) evt.getSource();
             int row = target.getSelectedRow();
-            int column = target.getSelectedColumn();
             BeanTableModel model = getContainer().injectSafely("modelTable");
             City city = (City) model.getRows().get(row);
             EditFormCity form = new EditFormCity(city, this);
