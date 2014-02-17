@@ -47,13 +47,12 @@ public class BasicConfigurationBean implements Serializable {
      * @param dbProperties
      * @param dialect
      */
-
     public static void buildContainer(Properties dbProperties, Dialect dialect) {
 
         configureConn(dbProperties);
         configureQueryRunner();
         configureDialect(dialect);
-        registerBean("columnMapping",new BasicColumnMapping());
+        registerBean("columnMapping", new BasicColumnMapping());
     }
 
     /**
@@ -104,7 +103,6 @@ public class BasicConfigurationBean implements Serializable {
             Logger.getLogger(BasicConfigurationBean.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
 
     /**
      * Register a new bean, if the bean already exists, nothing happens

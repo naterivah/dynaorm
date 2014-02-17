@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package be.bittich.dyanorm.connection;
 
 /**
  *
  * @author user
  */
-public interface BasicConnectionDB extends ConnectionDB{
+public interface BasicConnectionDB extends ConnectionDB {
+
     String getDriver();
 
     String getUrl();
@@ -28,11 +28,11 @@ public interface BasicConnectionDB extends ConnectionDB{
     String getPassword();
 
     String getLogin();
-    
+
     Integer getInitialSize();
 
     BasicConnectionDB setDriver(String driver);
-    
+
     BasicConnectionDB setInitialSize(Integer initialSize);
 
     BasicConnectionDB setUrl(String url);
@@ -40,6 +40,5 @@ public interface BasicConnectionDB extends ConnectionDB{
     BasicConnectionDB setPassword(String password);
 
     BasicConnectionDB setLogin(String login);
-    
-    
+
 }

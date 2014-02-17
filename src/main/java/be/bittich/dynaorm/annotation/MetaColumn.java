@@ -30,6 +30,6 @@ public @interface MetaColumn {
 
     String columnName() default "";
 
-    boolean notNull() default true;
+    boolean notNull() default false;
 
 }

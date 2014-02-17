@@ -54,7 +54,15 @@ public class TestDao {
 
     }
 
-  
+    @Test
+    public void testInsert() {
+        DynaRepository<City> repository = getContainer().injectSafely("daoCity");
+        City city = new City();
+        city.setName("hello");
+        city.setZip("9999");
+        repository.update(city);
+
+    }
 
     @Test
     public void testFindAll() throws BeanNotFoundException {
@@ -74,7 +82,7 @@ public class TestDao {
     public void testFindBy() throws ColumnNotFoundException, RequestInvalidException {
         DynaRepository<City> repository = getContainer().injectSafely("daoCity");
         List<City> list = repository.findBy("name", "Ganshoren");
-        for(City c:list){
+        for (City c : list) {
             System.out.println(c.getZip());
         }
 
@@ -110,7 +118,5 @@ public class TestDao {
             System.out.println(c.getId() + ":" + c.getZip());
         }
     }
-    
- 
-    
+
 }

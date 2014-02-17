@@ -21,6 +21,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Representation of a bean. You need to specify an unique id for each bean
+ *
  * @author Nordine
  * @param <T>
  */
@@ -30,7 +31,7 @@ public class Bean<T> implements Serializable {
     private final String id;
     private final T bean;
     private final Class<T> clazz;
-    
+
     public Class<T> getClazz() {
 
         return clazz;
@@ -43,7 +44,7 @@ public class Bean<T> implements Serializable {
     public Bean(String key, T bean) {
         this.id = key;
         this.bean = bean;
-        this.clazz=(Class<T>)bean.getClass();
+        this.clazz = (Class<T>) bean.getClass();
     }
 
     @Override

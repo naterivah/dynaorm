@@ -32,11 +32,11 @@ public interface DynaRepository<T> extends Serializable {
 
     T findById(T t);
 
-    T update(T t);
+    void update(T t);
 
     Boolean delete(T t) throws EntityDoesNotExistException;
 
-    List<T> findBy(String columnName,String value ) throws ColumnNotFoundException,RequestInvalidException;
+    List<T> findBy(String columnName, String value) throws ColumnNotFoundException, RequestInvalidException;
 
     TableColumn getTableColumn();
 }

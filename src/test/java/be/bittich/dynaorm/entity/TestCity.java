@@ -32,12 +32,12 @@ public class TestCity {
     public void testAnnotation() throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
 
         City city = new City(12, "lol", "mdr");
-        Map<Field,PrimaryKey> fields = getAnnotedFields(city, PrimaryKey.class);
+        Map<Field, PrimaryKey> fields = getAnnotedFields(city, PrimaryKey.class);
         for (Field f : fields.keySet()) {
             String name = f.getName();
             String fieldValue = getFieldValue(name, city);
             System.out.println(fieldValue);
-            String label= fields.get(f).label();
+            String label = fields.get(f).label();
             System.out.println(label);
         }
 

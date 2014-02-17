@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package be.bittich.dynaorm.exception;
 
 /**
  *
  * @author Nordine
  */
-public class ColumnNotFoundException extends Exception{
+public class ColumnNotFoundException extends Exception {
+
     private static final long serialVersionUID = -3310115588598965890L;
 
     public ColumnNotFoundException(String msg) {
@@ -30,5 +30,5 @@ public class ColumnNotFoundException extends Exception{
     public ColumnNotFoundException() {
         super();
     }
-    
+
 }

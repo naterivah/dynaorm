@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package be.bittich.dynaorm.exception;
 
 /**
  *
  * @author Nordine
  */
-public class BeanNotFoundException extends Exception{
+public class BeanNotFoundException extends Exception {
+
     private static final long serialVersionUID = -5784646061904407507L;
 
     public BeanNotFoundException(String msg) {
@@ -30,5 +30,5 @@ public class BeanNotFoundException extends Exception{
     public BeanNotFoundException() {
         super();
     }
-    
+
 }

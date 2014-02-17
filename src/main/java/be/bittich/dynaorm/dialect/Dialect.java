@@ -26,7 +26,7 @@ public interface Dialect {
     static final String REPLACEMENT_VALUE = "? ";
 
     String selectAll(String tableName);
-    
+
     String from(String tableName);
 
     String equalTo(String request, String label) throws RequestInvalidException;
@@ -35,13 +35,13 @@ public interface Dialect {
 
     String where(String request);
 
-    String insert();
+    String insert(String tableName, String columnNames, String values);
 
     String update();
 
     String delete(String tableName);
 
     String type();
-    
+
     String requestForTableColumns(String tableName);
 }

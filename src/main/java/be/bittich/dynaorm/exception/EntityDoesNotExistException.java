@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package be.bittich.dynaorm.exception;
 
 /**
  *
  * @author Nordine
  */
-public class EntityDoesNotExistException extends Exception{
+public class EntityDoesNotExistException extends Exception {
+
     private static final long serialVersionUID = -3310115588598965890L;
 
     public EntityDoesNotExistException(String msg) {
@@ -30,5 +30,5 @@ public class EntityDoesNotExistException extends Exception{
     public EntityDoesNotExistException() {
         super();
     }
-    
+
 }

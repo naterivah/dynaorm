@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package be.bittich.dynaorm.maping;
 
 import be.bittich.dynaorm.repository.TableColumn;
@@ -25,14 +24,16 @@ import java.util.Map;
  *
  * @author Nordine Bittich
  */
-public interface ColumnMapping extends Serializable{
+public interface ColumnMapping extends Serializable {
+
     /**
-     * take an object and a table column then return a map with the actual columnName 
-     * and the field related
+     * take an object and a table column then return a map with the actual
+     * columnName and the field related
+     *
      * @param <T>
      * @param obj
      * @param tableColumn
-     * @return 
+     * @return
      */
-    <T>Map<String,Field> mapToSQLColumns(T obj,TableColumn tableColumn);
+    <T> Map<String, Field> mapToSQLColumns(T obj, TableColumn tableColumn);
 }

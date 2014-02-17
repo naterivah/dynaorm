@@ -35,8 +35,9 @@ public class MySQLDialect implements Dialect {
     public static final String EXACTLYLIKE = "LIKE % % ";
     public static final String EQUALITY = "= ";
     public static final String DELETE = "DELETE ";
-    public static final String REQ_FOR_TABLE_COLUMNS="SELECT * FROM %s WHERE 1=0";
-    public final String orderBy = "ORDER BY ";
+    public static final String REQ_FOR_TABLE_COLUMNS = "SELECT * FROM %s WHERE 1=0";
+    public static final String ORDER_BY= "ORDER BY ";
+    public static final String INSERT="INSERT INTO %s (%s) VALUES (%s)";
 
     @Override
     public String selectAll(String tableName) {
@@ -62,16 +63,14 @@ public class MySQLDialect implements Dialect {
     }
 
     @Override
-    public String insert() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public String insert(String tableName, String columnNames, String values) {
+        return String.format(INSERT, tableName,columnNames,values);
     }
 
     @Override
     public String update() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
-
 
     @Override
     public String type() {
@@ -85,13 +84,13 @@ public class MySQLDialect implements Dialect {
 
     @Override
     public String delete(String tableName) {
-          return DELETE.concat(this.from(tableName));
+        return DELETE.concat(this.from(tableName));
 
     }
 
     @Override
     public String requestForTableColumns(String tableName) {
-        return String.format(REQ_FOR_TABLE_COLUMNS,tableName);
+        return String.format(REQ_FOR_TABLE_COLUMNS, tableName);
     }
 
 }

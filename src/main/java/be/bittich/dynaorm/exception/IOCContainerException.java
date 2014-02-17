@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package be.bittich.dynaorm.exception;
 
 /**
  *
  * @author Nordine
  */
-public class IOCContainerException extends Exception{
+public class IOCContainerException extends Exception {
+
     private static final long serialVersionUID = -4466623914527847506L;
 
     public IOCContainerException(String msg) {
@@ -30,5 +30,5 @@ public class IOCContainerException extends Exception{
     public IOCContainerException() {
         super();
     }
-    
+
 }

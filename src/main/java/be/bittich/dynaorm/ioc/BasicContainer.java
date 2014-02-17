@@ -101,13 +101,15 @@ public class BasicContainer implements Serializable {
     }
 
     /**
-     * Safely containerBeans a bean from the container. If the bean doesn't exist, it returns null
+     * Safely containerBeans a bean from the container. If the bean doesn't
+     * exist, it returns null
+     *
      * @param <T>
      * @param id
      * @return bean
      */
     public <T> T injectSafely(String id) {
-        T bean=null;
+        T bean = null;
         try {
             bean = this.inject(id);
         } catch (BeanNotFoundException ex) {

@@ -33,6 +33,7 @@ import org.junit.Test;
  * @author Evoliris
  */
 public class testMapping {
+
     @Before
     public void setup() {
         //get an inputStream
@@ -47,11 +48,12 @@ public class testMapping {
         BasicConfigurationBean.registerBean("daoCity", new DAOCity());
 
     }
+
     @Test
     public void testColumnMapping() {
         ColumnMapping columnMapping = getContainer().injectSafely("columnMapping");
-        DynaRepository dao= getContainer().injectSafely("daoCity");
-        Map<String, Field> map = columnMapping.mapToSQLColumns(new City(),dao.getTableColumn());
+        DynaRepository dao = getContainer().injectSafely("daoCity");
+        Map<String, Field> map = columnMapping.mapToSQLColumns(new City(), dao.getTableColumn());
         for (String s : map.keySet()) {
             System.out.println(s);
         }
