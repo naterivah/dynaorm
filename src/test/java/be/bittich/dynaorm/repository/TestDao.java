@@ -54,10 +54,7 @@ public class TestDao {
 
     }
 
-    @Test
-    public void testGetTableName() throws BeanNotFoundException {
-        DynaRepository<City> repository = getContainer().inject("daoCity");
-    }
+  
 
     @Test
     public void testFindAll() throws BeanNotFoundException {

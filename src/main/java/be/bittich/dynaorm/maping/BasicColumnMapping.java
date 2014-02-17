@@ -46,7 +46,6 @@ public class BasicColumnMapping implements ColumnMapping {
             //map only the field present in the table
             if (columnsFromDB.contains(columnName)) {
                 filteredFields.put(columnName, field);
-
             }
         }
 

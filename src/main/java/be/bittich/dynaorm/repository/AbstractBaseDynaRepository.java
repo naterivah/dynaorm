@@ -24,6 +24,7 @@ import be.bittich.dynaorm.exception.ColumnNotFoundException;
 import be.bittich.dynaorm.exception.EntityDoesNotExistException;
 import be.bittich.dynaorm.exception.RequestInvalidException;
 import static be.bittich.dynaorm.ioc.BasicContainer.getContainer;
+import be.bittich.dynaorm.maping.DynaRowProcessor;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.sql.ResultSet;
@@ -35,6 +36,7 @@ import java.util.logging.Logger;
 import org.apache.commons.collections4.KeyValue;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
+import org.apache.commons.dbutils.RowProcessor;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
@@ -45,14 +47,14 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
  * @param <T>
  */
 public class AbstractBaseDynaRepository<T> implements DynaRepository<T> {
-
+    
     private static final long serialVersionUID = 1L;
     protected static final Logger LOG = Logger.getLogger("AbstractBaseDAO");
     private final Class<T> clazz;
     protected QueryRunner runner;
     protected Dialect dialect;
     protected TableColumn tableColumn;
-
+    protected RowProcessor rowProcessor;
     private Class<T> getClazz() {
         Class<T> clazzz = (Class<T>) ((ParameterizedType) (getClass()
                 .getGenericSuperclass())).getActualTypeArguments()[0];
@@ -133,7 +135,7 @@ public class AbstractBaseDynaRepository<T> implements DynaRepository<T> {
             throw new ColumnNotFoundException(String.format("Column name %s does'nt exist on the table %s", columnName, tableColumn.getTableName()));
         }
         String req = dialect.selectAll(tableColumn.getTableName());
-        req=dialect.where(req);
+        req = dialect.where(req);
         req = dialect.equalTo(req, columnName);
         List<T> results = null;
         try {
@@ -151,12 +153,12 @@ public class AbstractBaseDynaRepository<T> implements DynaRepository<T> {
     }
 
     protected ResultSetHandler<List<T>> getListHandler() {
-        ResultSetHandler<List<T>> handler = new BeanListHandler(clazz);
+        ResultSetHandler<List<T>> handler = new BeanListHandler(clazz, rowProcessor);
         return handler;
     }
 
     protected ResultSetHandler<T> getHandler() {
-        ResultSetHandler<T> handler = new BeanHandler(clazz);
+        ResultSetHandler<T> handler = new BeanHandler(clazz, rowProcessor);
         return handler;
     }
 
@@ -167,6 +169,7 @@ public class AbstractBaseDynaRepository<T> implements DynaRepository<T> {
         TableFromDB table = AnnotationProcessor.getAnnotationType(clazz, TableFromDB.class);
         String tableName = table != null && !isEmpty(table.tableName()) ? table.tableName() : table.tableName();
         tableColumn = new TableColumn(tableName);
+        rowProcessor = new DynaRowProcessor(tableColumn);
         try {
             ResultSet rs = runner.getDataSource().getConnection().prepareStatement(dialect.requestForTableColumns(tableName)).executeQuery();
             Integer nbColumns = rs.getMetaData().getColumnCount();

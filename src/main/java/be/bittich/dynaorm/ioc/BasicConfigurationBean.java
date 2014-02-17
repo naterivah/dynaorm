@@ -25,6 +25,7 @@ import be.bittich.dynaorm.exception.BeanNotFoundException;
 import be.bittich.dynaorm.exception.IOCContainerException;
 import static be.bittich.dynaorm.ioc.BasicContainer.getContainer;
 import be.bittich.dynaorm.maping.BasicColumnMapping;
+import be.bittich.dynaorm.maping.DynaRowProcessor;
 import java.io.Serializable;
 import java.util.Properties;
 import java.util.logging.Level;
