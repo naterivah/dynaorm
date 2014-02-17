@@ -73,6 +73,7 @@ public class EditFormCity extends javax.swing.JDialog {
         butDel = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Edit");
 
         jLabel1.setText("Zip:");
 
