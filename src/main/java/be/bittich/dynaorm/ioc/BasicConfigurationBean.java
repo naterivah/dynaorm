@@ -24,6 +24,7 @@ import be.bittich.dynaorm.exception.BeanAlreadyExistException;
 import be.bittich.dynaorm.exception.BeanNotFoundException;
 import be.bittich.dynaorm.exception.IOCContainerException;
 import static be.bittich.dynaorm.ioc.BasicContainer.getContainer;
+import be.bittich.dynaorm.maping.BasicColumnMapping;
 import java.io.Serializable;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -39,16 +40,19 @@ public class BasicConfigurationBean implements Serializable {
     private static final long serialVersionUID = -4279720585191618511L;
 
     /**
-     * Build the container with the mininmum required configuration bean.
-     * if you want to add new Bean to the container, utilize the registerBean
-     * method.
-
+     * Build the container with the mininmum required configuration bean. if you
+     * want to add new Bean to the container, utilize the registerBean method.
+     *
      * @param dbProperties
+     * @param dialect
      */
-    public static void buildContainer(Properties dbProperties) {
-  
+
+    public static void buildContainer(Properties dbProperties, Dialect dialect) {
+
         configureConn(dbProperties);
         configureQueryRunner();
+        configureDialect(dialect);
+        registerBean("columnMapping",new BasicColumnMapping());
     }
 
     /**
@@ -66,8 +70,6 @@ public class BasicConfigurationBean implements Serializable {
                 .setInitialSize(Integer.parseInt(dbProperties.getProperty("initialSize")));
         registerBean("connectionDB", conn);
 
-        //configure dialect
-        configureDialect(driver);
     }
 
     /**
@@ -86,7 +88,13 @@ public class BasicConfigurationBean implements Serializable {
 
     }
 
-    private static void configureDialect(String dialect) {
+    public static void configureDialect(Dialect dialect) {
+
+        registerBean("dialect", dialect);
+
+    }
+
+    public static void configureDialect(String dialect) {
         Dialect dialectB;
         try {
             dialectB = (Dialect) Class.forName(DIALECT.get(dialect)).newInstance();
@@ -95,6 +103,7 @@ public class BasicConfigurationBean implements Serializable {
             Logger.getLogger(BasicConfigurationBean.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
 
     /**
      * Register a new bean, if the bean already exists, nothing happens
@@ -108,7 +117,7 @@ public class BasicConfigurationBean implements Serializable {
         try {
             getContainer().addBean(bean);
         } catch (BeanAlreadyExistException | IOCContainerException ex) {
-           
+
         }
     }
 }

@@ -18,6 +18,7 @@ package be.bittich.dynaorm.core;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -53,7 +54,7 @@ public class AnnotationProcessor {
             E annotationX = field.getAnnotation(annotation);
             if (annotationX != null) {
                 filteredFields.put(field, annotationX);
-            };
+            }
         }
         return filteredFields;
     }
@@ -61,4 +62,5 @@ public class AnnotationProcessor {
     public static <T,E extends Annotation> E getAnnotationType(Class<T>clazz,Class<E> annotation){
         return clazz.getAnnotation(annotation);
     }
+    
 }

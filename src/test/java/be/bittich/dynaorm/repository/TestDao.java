@@ -16,6 +16,7 @@
 package be.bittich.dynaorm.repository;
 
 import static be.bittich.dynaorm.core.DynaUtils.loadProperties;
+import be.bittich.dynaorm.dialect.MySQLDialect;
 import be.bittich.dynaorm.entity.City;
 import be.bittich.dynaorm.exception.BeanNotFoundException;
 import be.bittich.dynaorm.exception.ColumnNotFoundException;
@@ -24,7 +25,6 @@ import be.bittich.dynaorm.exception.RequestInvalidException;
 import be.bittich.dynaorm.ioc.BasicConfigurationBean;
 import static be.bittich.dynaorm.ioc.BasicContainer.getContainer;
 import java.io.InputStream;
-import java.sql.Types;
 import java.util.List;
 import java.util.Properties;
 import static junit.framework.TestCase.assertNotNull;
@@ -48,7 +48,7 @@ public class TestDao {
         Properties dbProperties = loadProperties(input);
 
         //initialize the container
-        BasicConfigurationBean.buildContainer(dbProperties);
+        BasicConfigurationBean.buildContainer(dbProperties, new MySQLDialect());
         //register the dao's to the basic container
         BasicConfigurationBean.registerBean("daoCity", new DAOCity());
 
@@ -113,4 +113,7 @@ public class TestDao {
             System.out.println(c.getId() + ":" + c.getZip());
         }
     }
+    
+ 
+    
 }
