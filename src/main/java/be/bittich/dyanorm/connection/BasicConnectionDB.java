@@ -40,5 +40,6 @@ public interface BasicConnectionDB extends ConnectionDB {
     BasicConnectionDB setPassword(String password);
 
     BasicConnectionDB setLogin(String login);
-
+    
+    BasicConnectionDB setAutoCommit(boolean autocommit);
 }

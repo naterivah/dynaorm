@@ -18,7 +18,9 @@ package be.bittich.dynaorm.maping;
 import be.bittich.dynaorm.repository.TableColumn;
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Map;
+import org.apache.commons.collections4.KeyValue;
 
 /**
  *
@@ -36,4 +38,13 @@ public interface ColumnMapping extends Serializable {
      * @return
      */
     <T> Map<String, Field> mapToSQLColumns(T obj, TableColumn tableColumn);
+    /**
+     * do the mapping and return a list of value and a list of column
+     * @param <T>
+     * @param t
+     * @param tableColumn
+     * @return
+     * @throws IllegalAccessException 
+     */
+    <T> KeyValue<List<String>, List<String>> getColumnsValuesMap(T t, TableColumn tableColumn) throws IllegalAccessException ;
 }

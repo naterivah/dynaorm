@@ -124,4 +124,10 @@ public final class BasicConnectionDBImpl implements BasicConnectionDB {
 
     }
 
+    @Override
+    public BasicConnectionDB setAutoCommit(boolean autocommit) {
+        this.ds.setDefaultAutoCommit(autocommit);
+        return this;
+    }
+
 }

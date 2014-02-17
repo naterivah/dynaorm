@@ -25,7 +25,6 @@ import be.bittich.dynaorm.exception.BeanNotFoundException;
 import be.bittich.dynaorm.exception.IOCContainerException;
 import static be.bittich.dynaorm.ioc.BasicContainer.getContainer;
 import be.bittich.dynaorm.maping.BasicColumnMapping;
-import be.bittich.dynaorm.maping.DynaRowProcessor;
 import java.io.Serializable;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -65,6 +64,7 @@ public class BasicConfigurationBean implements Serializable {
         ConnectionDB conn = BasicConnectionDBImpl.getInstance()
                 .setDriver(DRIVER_NAME.get(driver))
                 .setLogin(dbProperties.getProperty("user"))
+                .setAutoCommit(Boolean.getBoolean(dbProperties.getProperty("autocommit")))
                 .setPassword(dbProperties.getProperty("password"))
                 .setUrl(dbProperties.getProperty("url"))
                 .setInitialSize(Integer.parseInt(dbProperties.getProperty("initialSize")));

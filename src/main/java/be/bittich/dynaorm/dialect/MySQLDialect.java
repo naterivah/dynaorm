@@ -16,6 +16,9 @@
 package be.bittich.dynaorm.dialect;
 
 import be.bittich.dynaorm.exception.RequestInvalidException;
+import com.google.common.base.Joiner;
+import java.util.LinkedList;
+import java.util.List;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
@@ -36,8 +39,9 @@ public class MySQLDialect implements Dialect {
     public static final String EQUALITY = "= ";
     public static final String DELETE = "DELETE ";
     public static final String REQ_FOR_TABLE_COLUMNS = "SELECT * FROM %s WHERE 1=0";
-    public static final String ORDER_BY= "ORDER BY ";
-    public static final String INSERT="INSERT INTO %s (%s) VALUES (%s)";
+    public static final String ORDER_BY = "ORDER BY ";
+    public static final String INSERT = "INSERT INTO %s (%s) VALUES (%s)";
+    public static final String UPDATE = "UPDATE %s SET %s %s";
 
     @Override
     public String selectAll(String tableName) {
@@ -63,13 +67,24 @@ public class MySQLDialect implements Dialect {
     }
 
     @Override
-    public String insert(String tableName, String columnNames, String values) {
-        return String.format(INSERT, tableName,columnNames,values);
+    public String insert(String tableName, List<String> columns, List<String> values) {
+        List<String> replacementValues = new LinkedList();
+        for (String value : values) {
+            replacementValues.add(REPLACEMENT_VALUE);
+        }
+        String cols = Joiner.on(',').join(columns);
+        String vals = Joiner.on(",").join(replacementValues);
+        return String.format(INSERT, tableName, cols, vals);
     }
 
     @Override
-    public String update() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public String update(String tableName, List<String> columns, List<String> values, String condition) {
+        List<String> replacementValues = new LinkedList();
+        for (String column : columns) {
+            replacementValues.add(column.concat(EQUALITY).concat(REPLACEMENT_VALUE));
+        }
+        String req = Joiner.on(",").join(replacementValues);
+        return String.format(UPDATE, tableName, req, condition);
     }
 
     @Override

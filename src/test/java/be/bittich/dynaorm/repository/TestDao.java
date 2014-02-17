@@ -55,13 +55,27 @@ public class TestDao {
     }
 
     @Test
+    @Ignore
     public void testInsert() {
         DynaRepository<City> repository = getContainer().injectSafely("daoCity");
         City city = new City();
-        city.setName("hello");
+        city.setName("Kikoololmdr");
         city.setZip("9999");
         repository.update(city);
 
+    }
+
+    @Test
+    @Ignore
+    public void testUpdate() {
+        DynaRepository<City> repository = getContainer().injectSafely("daoCity");
+        City city = new City();
+        city.setId(2855);
+        city.setName("AHAHAHAHAHAHHA");
+        city.setZip("8733");
+           repository.update(city);
+        City city2 = repository.findById(city);
+        System.out.println(city2.getZip());
     }
 
     @Test

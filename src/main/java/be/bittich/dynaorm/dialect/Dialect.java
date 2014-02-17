@@ -16,6 +16,7 @@
 package be.bittich.dynaorm.dialect;
 
 import be.bittich.dynaorm.exception.RequestInvalidException;
+import java.util.List;
 
 /**
  *
@@ -35,9 +36,9 @@ public interface Dialect {
 
     String where(String request);
 
-    String insert(String tableName, String columnNames, String values);
+    String insert(String tableName, List<String> columns, List<String> values);
 
-    String update();
+    String update(String tableName, List<String> columns, List<String> values,String condition);
 
     String delete(String tableName);
 
