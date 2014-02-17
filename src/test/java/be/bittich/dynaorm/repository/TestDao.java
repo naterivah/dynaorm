@@ -55,7 +55,7 @@ public class TestDao {
     }
 
     @Test
-    @Ignore
+   
     public void testInsert() {
         DynaRepository<City> repository = getContainer().injectSafely("daoCity");
         City city = new City();

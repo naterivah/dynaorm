@@ -24,7 +24,7 @@ import java.io.Serializable;
  *
  * @author Nordine
  */
-@TableFromDB(tableName = "cities")
+@TableFromDB(tableName = "city")
 public class City implements Serializable {
 
     public City() {

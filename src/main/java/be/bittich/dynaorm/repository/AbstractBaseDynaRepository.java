@@ -15,7 +15,6 @@
  */
 package be.bittich.dynaorm.repository;
 
-import be.bittich.dynaorm.annotation.MetaColumn;
 import be.bittich.dynaorm.annotation.PrimaryKey;
 import be.bittich.dynaorm.annotation.TableFromDB;
 import be.bittich.dynaorm.core.AnnotationProcessor;
@@ -32,13 +31,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.collections4.KeyValue;
-import org.apache.commons.collections4.keyvalue.DefaultKeyValue;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.RowProcessor;
@@ -61,7 +58,7 @@ public class AbstractBaseDynaRepository<T> implements DynaRepository<T> {
     protected TableColumn tableColumn;
     protected RowProcessor rowProcessor;
 
-    private Class<T> getClazz() {
+    private Class<T > getClazz() {
         Class<T> clazzz = (Class<T>) ((ParameterizedType) (getClass()
                 .getGenericSuperclass())).getActualTypeArguments()[0];
 
@@ -157,7 +154,6 @@ public class AbstractBaseDynaRepository<T> implements DynaRepository<T> {
     public void update(T t) {
         //check if exists, if yes update, if not insert
         T tFromDB = this.findById(t);
-
         if (tFromDB == null) {
             persist(t);
         } else {
@@ -174,8 +170,9 @@ public class AbstractBaseDynaRepository<T> implements DynaRepository<T> {
             KeyValue<List<String>, List<String>> colVal = mappingUtil.getColumnsValuesMap(t, tableColumn);
             String request = dialect.update(tableColumn.getTableName(), colVal.getKey(), colVal.getValue(), conditions);
             colVal.getValue().addAll(pkBuilt.getValue());
-            runner.update(request,colVal.getValue().toArray());
+            runner.update(request, colVal.getValue().toArray());
         } catch (IllegalAccessException | SQLException | RequestInvalidException ex) {
+
             Logger.getLogger(AbstractBaseDynaRepository.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -193,8 +190,10 @@ public class AbstractBaseDynaRepository<T> implements DynaRepository<T> {
             String request = dialect.insert(tableColumn.getTableName(), colVal.getKey(), colVal.getValue());
             runner.update(request, colVal.getValue().toArray());
         } catch (IllegalAccessException ex) {
+
             Logger.getLogger(AbstractBaseDynaRepository.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
+
             Logger.getLogger(AbstractBaseDynaRepository.class.getName()).log(Level.SEVERE, null, ex);
         }
 

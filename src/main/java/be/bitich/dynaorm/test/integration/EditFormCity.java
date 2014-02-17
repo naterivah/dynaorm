@@ -45,9 +45,7 @@ public class EditFormCity extends javax.swing.JDialog {
     public EditFormCity(City city, Frame parentWindow) {
         super(parentWindow, true);
         initComponents();
-
         this.city = city;
-
         this.zip.setText(city.getZip());
         this.name.setText(city.getName());
         butDel.setEnabled(true);

@@ -61,10 +61,12 @@ public class BasicConfigurationBean implements Serializable {
      */
     private static void configureConn(Properties dbProperties) {
         String driver = dbProperties.getProperty("driver");
+        Boolean autoCommit=Boolean.parseBoolean(dbProperties.getProperty("autocommit"));
+       
         ConnectionDB conn = BasicConnectionDBImpl.getInstance()
                 .setDriver(DRIVER_NAME.get(driver))
                 .setLogin(dbProperties.getProperty("user"))
-                .setAutoCommit(Boolean.getBoolean(dbProperties.getProperty("autocommit")))
+                .setAutoCommit(autoCommit)
                 .setPassword(dbProperties.getProperty("password"))
                 .setUrl(dbProperties.getProperty("url"))
                 .setInitialSize(Integer.parseInt(dbProperties.getProperty("initialSize")));

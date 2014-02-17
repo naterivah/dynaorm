@@ -15,6 +15,7 @@
  */
 package be.bitich.dynaorm.test.integration;
 
+import be.bittich.dynaorm.swing.BeanTableModel;
 import static be.bittich.dynaorm.core.DynaUtils.loadProperties;
 import be.bittich.dynaorm.dialect.MySQLDialect;
 import static be.bittich.dynaorm.ioc.BasicConfigurationBean.buildContainer;
@@ -216,7 +217,7 @@ public class SwingGui extends javax.swing.JFrame {
 
     private static void setupTableModel() {
         DynaRepository repository = getContainer().injectSafely("daoCity");
-        BeanTableModel<City> model = new BeanTableModel<City>(City.class);
+        BeanTableModel<City> model = new BeanTableModel(City.class);
         TableColumn tableColumn = repository.getTableColumn();
         for (String columnName : tableColumn.getColumns().keySet()) {
             model.addColumn(columnName, columnName);
