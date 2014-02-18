@@ -117,5 +117,20 @@ public class BasicContainer implements Serializable {
         }
         return bean;
     }
+    
+    /**
+     * Create a new instance of t. the bean is never saved in the container
+     * @param <T>
+     * @param tClazz
+     * @return 
+     */
+    public <T> T newInstance(Class<T> tClazz){
+        try {
+            return tClazz.newInstance();
+        } catch (InstantiationException | IllegalAccessException ex) {
+            Logger.getLogger(BasicContainer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
 
 }

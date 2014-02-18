@@ -21,7 +21,7 @@ import be.bittich.dynaorm.entity.City;
  *
  * @author Nordine
  */
-public class DAOCity extends AbstractBaseDynaRepository<City> {
+public class DAOCity extends GenericDynaRepository<City> {
 
     private static final long serialVersionUID = 1685878902341815820L;
 

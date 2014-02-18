@@ -15,18 +15,25 @@
  */
 package be.bittich.dynaorm.swing;
 
+import static be.bittich.dynaorm.ioc.BasicContainer.getContainer;
+import be.bittich.dynaorm.maping.ColumnMapping;
+import be.bittich.dynaorm.repository.TableColumn;
 import be.bittich.dynaorm.swing.BeanTableModel.EditMode;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.table.AbstractTableModel;
 
 public class BeanTableModel<T> extends AbstractTableModel {
 
     private static final long serialVersionUID = -2807189182145729669L;
-
+    private ColumnMapping columnMapper;
     private final List<T> rows = new ArrayList();
     private final List<BeanColumn> columns = new ArrayList();
     private final Class<T> beanClass;
@@ -37,6 +44,28 @@ public class BeanTableModel<T> extends AbstractTableModel {
 
     public BeanTableModel(Class<T> beanClass) {
         this.beanClass = beanClass;
+        this.columnMapper = getContainer().injectSafely("columnMapping");
+    }
+
+    /**
+     * Do the mapping between tablecolumn and beancolumn
+     *
+     * @param bean
+     * @param tableColumn
+     */
+    public void addAllColumns(TableColumn tableColumn) {
+        T bean = null;
+        try {
+            bean = beanClass.newInstance();
+        } catch (InstantiationException | IllegalAccessException ex) {
+            Logger.getLogger(BeanTableModel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Map<String, Field> mapping = columnMapper.mapToSQLColumns(bean, tableColumn);
+        for (String column : mapping.keySet()) {
+            Field field = mapping.get(column);
+            String beanAttribute = field.getName();
+            addColumn(column, beanAttribute, EditMode.NON_EDITABLE);
+        }
     }
 
     public void addColumn(String columnGUIName, String beanAttribute,

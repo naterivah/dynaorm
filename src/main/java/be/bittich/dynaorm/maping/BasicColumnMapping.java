@@ -17,7 +17,6 @@ package be.bittich.dynaorm.maping;
 
 import be.bittich.dynaorm.annotation.MetaColumn;
 import be.bittich.dynaorm.annotation.PrimaryKey;
-import be.bittich.dynaorm.repository.AbstractBaseDynaRepository;
 import be.bittich.dynaorm.repository.TableColumn;
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -45,6 +44,7 @@ public class BasicColumnMapping implements ColumnMapping {
         //map the column name with the field
         Map<String, Field> filteredFields = new HashMap();
         for (Field field : fields) {
+            field.setAccessible(true);
             MetaColumn annotationX = field.getAnnotation(MetaColumn.class);
             //by default, columnName=field name
             String columnName = field.getName();
@@ -62,6 +62,7 @@ public class BasicColumnMapping implements ColumnMapping {
 
     /**
      * do the mapping
+     * @throws java.lang.IllegalAccessException
      */
     @Override
     public <T> KeyValue<List<String>, List<String>> getColumnsValuesMap(T t, TableColumn tableColumn) throws IllegalAccessException {
@@ -87,7 +88,7 @@ public class BasicColumnMapping implements ColumnMapping {
                 }
 
             } catch (IllegalArgumentException ex) {
-                Logger.getLogger(AbstractBaseDynaRepository.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(BasicColumnMapping.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         }

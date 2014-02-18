@@ -141,24 +141,27 @@ public class SwingGui extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        EditFormCity form = new EditFormCity( this);
+        DynaRepository repository = getContainer().injectSafely("daoCountry");
+        EditForm<Pays> form = new EditForm(getContainer().newInstance(Pays.class), repository, this, false);
         form.setVisible(true);
         resetTable();
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void tableBeanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableBeanMouseClicked
         if (evt.getClickCount() == 2) {
+            DynaRepository repository = getContainer().injectSafely("daoCountry");
             JTable target = (JTable) evt.getSource();
             int row = target.getSelectedRow();
-            BeanTableModel model = getContainer().injectSafely("modelTable");
-            City city = (City) model.getRows().get(row);
-            EditFormCity form = new EditFormCity(city, this);
-            form.setVisible(true);
+            BeanTableModel<Pays> model = getContainer().injectSafely("modelTable");
+            Pays pays = (Pays) model.getRows().get(row);
+            EditForm<Pays> form = new EditForm<Pays>(pays, repository, this, true);
+             form.setVisible(true);
             resetTable();
         }
     }//GEN-LAST:event_tableBeanMouseClicked
     private void resetTable() {
-        DynaRepository repository = getContainer().injectSafely("daoCity");
+        //DynaRepository repository = getContainer().injectSafely("daoCity");
+        DynaRepository repository = getContainer().injectSafely("daoCountry");
         BeanTableModel model = getContainer().injectSafely("modelTable");
         model.clearRows();
         model.addRows(repository.findAll());
@@ -212,17 +215,17 @@ public class SwingGui extends javax.swing.JFrame {
         buildContainer(dbProperties, new MySQLDialect());
         //register the dao's to the basic container
         registerBean("daoCity", new DAOCity());
+        registerBean("daoCountry", new DAOCountry());
 
     }
 
     private static void setupTableModel() {
-        DynaRepository repository = getContainer().injectSafely("daoCity");
-        BeanTableModel<City> model = new BeanTableModel(City.class);
+        // DynaRepository repository = getContainer().injectSafely("daoCity");
+        DynaRepository repository = getContainer().injectSafely("daoCountry");
+        BeanTableModel<Pays> model = new BeanTableModel(Pays.class);
         TableColumn tableColumn = repository.getTableColumn();
-        for (String columnName : tableColumn.getColumns().keySet()) {
-            model.addColumn(columnName, columnName);
-        }
-        List<City> listCities = repository.findAll();
+        model.addAllColumns(tableColumn);
+        List<Pays> listCities = repository.findAll();
         model.addRows(listCities);
         registerBean("modelTable", model);
     }

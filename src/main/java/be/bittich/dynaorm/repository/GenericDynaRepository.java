@@ -48,16 +48,16 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
  * @author Nordine
  * @param <T>
  */
-public class AbstractBaseDynaRepository<T> implements DynaRepository<T> {
+public class GenericDynaRepository<T> implements DynaRepository<T> {
 
     private static final long serialVersionUID = 1L;
-    protected static final Logger LOG = Logger.getLogger("AbstractBaseDAO");
+    protected static final Logger LOG = Logger.getLogger("GenericDynaRepository");
     private final Class<T> clazz;
     protected QueryRunner runner;
     protected Dialect dialect;
     protected TableColumn tableColumn;
     protected RowProcessor rowProcessor;
-
+    
     private Class<T > getClazz() {
         Class<T> clazzz = (Class<T>) ((ParameterizedType) (getClass()
                 .getGenericSuperclass())).getActualTypeArguments()[0];
@@ -69,7 +69,7 @@ public class AbstractBaseDynaRepository<T> implements DynaRepository<T> {
      * Construct the repository
      *
      */
-    protected AbstractBaseDynaRepository() {
+    protected GenericDynaRepository() {
         clazz = getClazz();
         configure();
     }
@@ -103,9 +103,9 @@ public class AbstractBaseDynaRepository<T> implements DynaRepository<T> {
             T result = runner.query(req, getHandler(), pkBuilt.getValue().toArray());
             return result;
         } catch (SQLException ex) {
-            Logger.getLogger(AbstractBaseDynaRepository.class.getName()).log(Level.SEVERE, ex.getSQLState(), ex);
+            Logger.getLogger(GenericDynaRepository.class.getName()).log(Level.SEVERE, ex.getSQLState(), ex);
         } catch (RequestInvalidException ex) {
-            Logger.getLogger(AbstractBaseDynaRepository.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GenericDynaRepository.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
@@ -124,9 +124,9 @@ public class AbstractBaseDynaRepository<T> implements DynaRepository<T> {
             runner.update(req, pkBuilt.getValue().toArray());
             return true;
         } catch (RequestInvalidException ex) {
-            Logger.getLogger(AbstractBaseDynaRepository.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
-            Logger.getLogger(AbstractBaseDynaRepository.class.getName()).log(Level.SEVERE, ex.getSQLState(), ex);
+            LOG.log(Level.SEVERE, ex.getSQLState(), ex);
         }
         return false;
     }
@@ -145,7 +145,7 @@ public class AbstractBaseDynaRepository<T> implements DynaRepository<T> {
             results = runner.query(req,
                     getListHandler(), value);
         } catch (SQLException ex) {
-            Logger.getLogger(AbstractBaseDynaRepository.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.log(Level.SEVERE, null, ex);
         }
         return results;
     }
@@ -173,7 +173,7 @@ public class AbstractBaseDynaRepository<T> implements DynaRepository<T> {
             runner.update(request, colVal.getValue().toArray());
         } catch (IllegalAccessException | SQLException | RequestInvalidException ex) {
 
-            Logger.getLogger(AbstractBaseDynaRepository.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.log(Level.SEVERE, null, ex);
         }
 
     }
@@ -191,10 +191,10 @@ public class AbstractBaseDynaRepository<T> implements DynaRepository<T> {
             runner.update(request, colVal.getValue().toArray());
         } catch (IllegalAccessException ex) {
 
-            Logger.getLogger(AbstractBaseDynaRepository.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
 
-            Logger.getLogger(AbstractBaseDynaRepository.class.getName()).log(Level.SEVERE, null, ex);
+           LOG.log(Level.SEVERE, null, ex);
         }
 
     }
@@ -226,7 +226,7 @@ public class AbstractBaseDynaRepository<T> implements DynaRepository<T> {
                 tableColumn.addColumn(name, type);
             }
         } catch (SQLException ex) {
-            Logger.getLogger(AbstractBaseDynaRepository.class.getName()).log(Level.SEVERE, null, ex);
+           LOG.log(Level.SEVERE, null, ex);
         }
     }
 }
