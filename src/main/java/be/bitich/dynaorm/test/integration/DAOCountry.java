@@ -20,8 +20,9 @@ import be.bittich.dynaorm.repository.GenericDynaRepository;
 
 /**
  *
- * @author Evoliris
+ * @author Nordine
  */
 public class DAOCountry extends GenericDynaRepository<Pays>{
+    private static final long serialVersionUID = 8575270131056097509L;
     
 }

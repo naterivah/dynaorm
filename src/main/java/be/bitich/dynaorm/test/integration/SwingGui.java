@@ -31,7 +31,7 @@ import javax.swing.table.TableModel;
 
 /**
  *
- * @author Evoliris
+ * @author Nordine Bittich This is only a test package
  */
 public class SwingGui extends javax.swing.JFrame {
 
@@ -63,8 +63,6 @@ public class SwingGui extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
-        jMenuItem3 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -87,7 +85,7 @@ public class SwingGui extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 486, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 507, Short.MAX_VALUE))
         );
 
         jMenu1.setText("File");
@@ -101,18 +99,6 @@ public class SwingGui extends javax.swing.JFrame {
         jMenu1.add(jMenuItem1);
 
         jMenuBar1.add(jMenu1);
-
-        jMenu2.setText("Table");
-
-        jMenuItem3.setText("Insert");
-        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem3ActionPerformed(evt);
-            }
-        });
-        jMenu2.add(jMenuItem3);
-
-        jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
 
@@ -136,29 +122,15 @@ public class SwingGui extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void tableBeanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableBeanMouseClicked
+        if (evt.getClickCount() == 2) {
+            //TODO
+        }
+    }//GEN-LAST:event_tableBeanMouseClicked
+
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         this.dispose();
     }//GEN-LAST:event_jMenuItem1ActionPerformed
-
-    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        DynaRepository repository = getContainer().injectSafely("daoCountry");
-        EditForm<Pays> form = new EditForm(getContainer().newInstance(Pays.class), repository, this, false);
-        form.setVisible(true);
-        resetTable();
-    }//GEN-LAST:event_jMenuItem3ActionPerformed
-
-    private void tableBeanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableBeanMouseClicked
-        if (evt.getClickCount() == 2) {
-            DynaRepository repository = getContainer().injectSafely("daoCountry");
-            JTable target = (JTable) evt.getSource();
-            int row = target.getSelectedRow();
-            BeanTableModel<Pays> model = getContainer().injectSafely("modelTable");
-            Pays pays = (Pays) model.getRows().get(row);
-            EditForm<Pays> form = new EditForm<Pays>(pays, repository, this, true);
-             form.setVisible(true);
-            resetTable();
-        }
-    }//GEN-LAST:event_tableBeanMouseClicked
     private void resetTable() {
         //DynaRepository repository = getContainer().injectSafely("daoCity");
         DynaRepository repository = getContainer().injectSafely("daoCountry");
@@ -166,7 +138,6 @@ public class SwingGui extends javax.swing.JFrame {
         model.clearRows();
         model.addRows(repository.findAll());
 
-        //this.repaint();
     }
 
     /**
@@ -220,9 +191,11 @@ public class SwingGui extends javax.swing.JFrame {
     }
 
     private static void setupTableModel() {
-        // DynaRepository repository = getContainer().injectSafely("daoCity");
+        //DynaRepository repository = getContainer().injectSafely("daoCity");
         DynaRepository repository = getContainer().injectSafely("daoCountry");
+        //BeanTableModel<Pays> model = new BeanTableModel(City.class);
         BeanTableModel<Pays> model = new BeanTableModel(Pays.class);
+
         TableColumn tableColumn = repository.getTableColumn();
         model.addAllColumns(tableColumn);
         List<Pays> listCities = repository.findAll();
@@ -231,10 +204,8 @@ public class SwingGui extends javax.swing.JFrame {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tableBean;
