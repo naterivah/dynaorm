@@ -34,6 +34,7 @@ import javax.swing.table.TableModel;
  * @author Nordine Bittich This is only a test package
  */
 public class SwingGui extends javax.swing.JFrame {
+    private static final long serialVersionUID = -825183243384848968L;
 
     /**
      * Creates new form SwingGui
@@ -131,14 +132,7 @@ public class SwingGui extends javax.swing.JFrame {
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         this.dispose();
     }//GEN-LAST:event_jMenuItem1ActionPerformed
-    private void resetTable() {
-        //DynaRepository repository = getContainer().injectSafely("daoCity");
-        DynaRepository repository = getContainer().injectSafely("daoCountry");
-        BeanTableModel model = getContainer().injectSafely("modelTable");
-        model.clearRows();
-        model.addRows(repository.findAll());
 
-    }
 
     /**
      * @param args the command line arguments
@@ -169,6 +163,7 @@ public class SwingGui extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new SwingGui().setVisible(true);
             }
@@ -184,6 +179,7 @@ public class SwingGui extends javax.swing.JFrame {
 
         //initialize the container
         buildContainer(dbProperties, new MySQLDialect());
+        
         //register the dao's to the basic container
         registerBean("daoCity", new DAOCity());
         registerBean("daoCountry", new DAOCountry());
@@ -191,9 +187,8 @@ public class SwingGui extends javax.swing.JFrame {
     }
 
     private static void setupTableModel() {
-        //DynaRepository repository = getContainer().injectSafely("daoCity");
+        
         DynaRepository repository = getContainer().injectSafely("daoCountry");
-        //BeanTableModel<Pays> model = new BeanTableModel(City.class);
         BeanTableModel<Pays> model = new BeanTableModel(Pays.class);
 
         TableColumn tableColumn = repository.getTableColumn();
