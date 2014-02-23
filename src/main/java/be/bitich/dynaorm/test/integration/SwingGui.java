@@ -166,7 +166,7 @@ public class SwingGui extends javax.swing.JFrame {
             @Override
             public void run() {
                 new SwingGui().setVisible(true);
-            }
+            } 
         });
     }
 
