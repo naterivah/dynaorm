@@ -83,7 +83,7 @@ public class BasicContainer implements Serializable {
     }
 
     /**
-     * The bean is containerBeansed by the container
+     * The bean is injected by the container
      *
      * @param <T>
      * @param id

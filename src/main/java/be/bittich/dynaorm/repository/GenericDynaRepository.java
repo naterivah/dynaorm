@@ -189,12 +189,9 @@ public class GenericDynaRepository<T> implements DynaRepository<T> {
             KeyValue<List<String>, List<String>> colVal = mappingUtil.getColumnsValuesMap(t, tableColumn);
             String request = dialect.insert(tableColumn.getTableName(), colVal.getKey(), colVal.getValue());
             runner.update(request, colVal.getValue().toArray());
-        } catch (IllegalAccessException ex) {
+        } catch (IllegalAccessException | SQLException ex) {
 
             LOG.log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-
-           LOG.log(Level.SEVERE, null, ex);
         }
 
     }
