@@ -32,11 +32,10 @@ public final class BasicConnectionDBImpl implements BasicConnectionDB {
 
     private static final long serialVersionUID = -7339131302708696365L;
     private static final Logger LOG = Logger.getLogger(BasicConnectionDBImpl.class.getName());
-    private static BasicConnectionDBImpl connectionDB;
 
     private final BoneCPDataSource ds;
 
-    private BasicConnectionDBImpl() {
+    public BasicConnectionDBImpl() {
         ds = new BoneCPDataSource();
     }
 
@@ -90,12 +89,7 @@ public final class BasicConnectionDBImpl implements BasicConnectionDB {
         return this;
     }
 
-    public static final BasicConnectionDB getInstance() {
-        if (connectionDB == null) {
-            connectionDB = new BasicConnectionDBImpl();
-        }
-        return connectionDB;
-    }
+
 
     @Override
     public Integer getInitialSize() {

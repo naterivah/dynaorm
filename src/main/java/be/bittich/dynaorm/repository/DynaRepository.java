@@ -40,4 +40,5 @@ public interface DynaRepository<T> extends Serializable {
     List<T> findBy(String columnName, String value) throws ColumnNotFoundException, RequestInvalidException;
 
     TableColumn getTableColumn();
+
 }

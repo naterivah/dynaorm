@@ -18,6 +18,7 @@ package be.bittich.dynaorm.setup;
 import be.bittich.dyanorm.connection.ConnectionDB;
 import be.bittich.dynaorm.connection.impl.BasicConnectionDBImpl;
 import static be.bittich.dynaorm.core.SystemConstant.DRIVER_NAME;
+import be.bittich.dynaorm.dialect.Dialect;
 import static be.bittich.dynaorm.ioc.BasicConfigurationBean.buildContainer;
 import static be.bittich.dynaorm.ioc.BasicConfigurationBean.registerBean;
 import java.util.Properties;
@@ -55,15 +56,14 @@ public abstract class AbstractSetup implements Setup {
     public void configureConnection() {
         String driver = dbProperties.getProperty("driver");
         Boolean autoCommit = Boolean.parseBoolean(dbProperties.getProperty("autocommit"));
-        ConnectionDB conn = BasicConnectionDBImpl.getInstance()
-                .setDriver(DRIVER_NAME.get(driver))
+        ConnectionDB conn = new BasicConnectionDBImpl().
+                setDriver(DRIVER_NAME.get(driver))
                 .setLogin(dbProperties.getProperty("user"))
                 .setAutoCommit(autoCommit)
                 .setPassword(dbProperties.getProperty("password"))
                 .setUrl(dbProperties.getProperty("url"))
                 .setInitialSize(Integer.parseInt(dbProperties.getProperty("initialSize")));
         registerBean("connectionDB", conn);
-
     }
 
     @Override
@@ -72,6 +72,8 @@ public abstract class AbstractSetup implements Setup {
         buildContainer();
         doSetup();
     }
+
+
 
     protected abstract void doSetup();
 

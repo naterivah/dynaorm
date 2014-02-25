@@ -59,7 +59,7 @@ public class GenericDynaRepository<T> implements DynaRepository<T> {
     protected TableColumn tableColumn;
     protected RowProcessor rowProcessor;
 
-    private Class<T> getClazz() {
+    public Class<T> getClazz() {
         Class<T> clazzz = (Class<T>) ((ParameterizedType) (getClass()
                 .getGenericSuperclass())).getActualTypeArguments()[0];
 
@@ -166,7 +166,7 @@ public class GenericDynaRepository<T> implements DynaRepository<T> {
 
     protected void merge(T t) {
         try {
-            Map<Field, PrimaryKey> fieldPrimary = AnnotationProcessor.getAnnotedFields(t, PrimaryKey.class);
+            Map<Field, PrimaryKey> fieldPrimary = getAnnotedFields(t, PrimaryKey.class);
             KeyValue<String, List<String>> pkBuilt = conditionPrimaryKeysBuilder(t, fieldPrimary, dialect);
             //where...
             String conditions = pkBuilt.getKey();
@@ -208,7 +208,8 @@ public class GenericDynaRepository<T> implements DynaRepository<T> {
         ResultSetHandler<T> handler = new BeanHandler(clazz, rowProcessor);
         return handler;
     }
-    
+
+
 
     private void configure() {
         runner = getContainer().injectSafely("queryRunner");

@@ -29,16 +29,17 @@ import org.apache.commons.collections4.keyvalue.DefaultKeyValue;
  *
  * @author Nordine
  */
-public class StringQueryBuilder 
-{
+public class StringQueryBuilder {
+
     /**
      * Return the request to get a row value mapped with the parameters
+     *
      * @param <T>
      * @param t
      * @param fieldPrimary
      * @param dialect
      * @return
-     * @throws RequestInvalidException 
+     * @throws RequestInvalidException
      */
     public static <T> KeyValue<String, List<String>> conditionPrimaryKeysBuilder(T t, Map<Field, PrimaryKey> fieldPrimary, Dialect dialect) throws RequestInvalidException {
         boolean firstIteration = true;
@@ -58,7 +59,5 @@ public class StringQueryBuilder
         }
         return new DefaultKeyValue(req, parameters);
     }
-    
-    
-    
+
 }
