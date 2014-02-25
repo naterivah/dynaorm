@@ -17,7 +17,7 @@ package be.bittich.dynaorm.swing;
 
 import static be.bittich.dynaorm.ioc.BasicContainer.getContainer;
 import be.bittich.dynaorm.maping.ColumnMapping;
-import be.bittich.dynaorm.repository.TableColumn;
+import be.bittich.dynaorm.core.TableColumn;
 import be.bittich.dynaorm.swing.BeanTableModel.EditMode;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;

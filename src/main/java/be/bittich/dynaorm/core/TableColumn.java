@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package be.bittich.dynaorm.repository;
+package be.bittich.dynaorm.core;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -45,5 +45,13 @@ public class TableColumn implements Serializable {
 
     public void addColumn(String columnName, Integer type) {
         columns.put(columnName, type);
+    }
+    /**
+     * shortcut method. return the type of a given column. or null if it doesnt exist
+     * @param columnName
+     * @return 
+     */
+    public Integer getTypeOfColumn(String columnName){
+        return this.getColumns().get(columnName);
     }
 }

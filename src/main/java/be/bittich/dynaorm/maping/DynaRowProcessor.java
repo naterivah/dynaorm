@@ -16,7 +16,7 @@
 package be.bittich.dynaorm.maping;
 
 import be.bittich.dynaorm.ioc.BasicContainer;
-import be.bittich.dynaorm.repository.TableColumn;
+import be.bittich.dynaorm.core.TableColumn;
 import be.bittich.dynaorm.sql.SQLTypeMap;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;

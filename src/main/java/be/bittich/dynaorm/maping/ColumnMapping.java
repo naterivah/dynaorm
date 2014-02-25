@@ -15,7 +15,7 @@
  */
 package be.bittich.dynaorm.maping;
 
-import be.bittich.dynaorm.repository.TableColumn;
+import be.bittich.dynaorm.core.TableColumn;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;

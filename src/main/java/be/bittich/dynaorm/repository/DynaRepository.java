@@ -15,6 +15,7 @@
  */
 package be.bittich.dynaorm.repository;
 
+import be.bittich.dynaorm.core.TableColumn;
 import be.bittich.dynaorm.exception.ColumnNotFoundException;
 import be.bittich.dynaorm.exception.EntityDoesNotExistException;
 import be.bittich.dynaorm.exception.RequestInvalidException;

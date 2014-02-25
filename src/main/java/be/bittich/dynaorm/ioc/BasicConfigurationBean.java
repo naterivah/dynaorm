@@ -16,9 +16,7 @@
 package be.bittich.dynaorm.ioc;
 
 import be.bittich.dyanorm.connection.ConnectionDB;
-import be.bittich.dynaorm.connection.impl.BasicConnectionDBImpl;
 import static be.bittich.dynaorm.core.SystemConstant.DIALECT;
-import static be.bittich.dynaorm.core.SystemConstant.DRIVER_NAME;
 import be.bittich.dynaorm.dialect.Dialect;
 import be.bittich.dynaorm.exception.BeanAlreadyExistException;
 import be.bittich.dynaorm.exception.BeanNotFoundException;
@@ -26,7 +24,6 @@ import be.bittich.dynaorm.exception.IOCContainerException;
 import static be.bittich.dynaorm.ioc.BasicContainer.getContainer;
 import be.bittich.dynaorm.maping.BasicColumnMapping;
 import java.io.Serializable;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.dbutils.QueryRunner;
@@ -43,36 +40,16 @@ public class BasicConfigurationBean implements Serializable {
      * Build the container with the mininmum required configuration bean. if you
      * want to add new Bean to the container, utilize the registerBean method.
      *
-     * @param dbProperties
-     * @param dialect
      */
-    public static void buildContainer(Properties dbProperties, Dialect dialect) {
+    public static void buildContainer() {
 
-        configureConn(dbProperties);
+       
         configureQueryRunner();
-        configureDialect(dialect);
+      
         registerBean("columnMapping", new BasicColumnMapping());
     }
 
-    /**
-     * Configure the bean for the connection to the database
-     *
-     * @param dbProperties
-     */
-    private static void configureConn(Properties dbProperties) {
-        String driver = dbProperties.getProperty("driver");
-        Boolean autoCommit=Boolean.parseBoolean(dbProperties.getProperty("autocommit"));
-       
-        ConnectionDB conn = BasicConnectionDBImpl.getInstance()
-                .setDriver(DRIVER_NAME.get(driver))
-                .setLogin(dbProperties.getProperty("user"))
-                .setAutoCommit(autoCommit)
-                .setPassword(dbProperties.getProperty("password"))
-                .setUrl(dbProperties.getProperty("url"))
-                .setInitialSize(Integer.parseInt(dbProperties.getProperty("initialSize")));
-        registerBean("connectionDB", conn);
 
-    }
 
     /**
      * configure a QueryRunner bean
@@ -90,11 +67,7 @@ public class BasicConfigurationBean implements Serializable {
 
     }
 
-    public static void configureDialect(Dialect dialect) {
 
-        registerBean("dialect", dialect);
-
-    }
 
     public static void configureDialect(String dialect) {
         Dialect dialectB;

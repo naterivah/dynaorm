@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Nordine.
+ * Copyright 2014 user.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package be.bitich.dynaorm.test.integration;
 
-import be.bittich.dynaorm.repository.*;
+package be.bittich.dynaorm.setup;
+
+import java.io.Serializable;
 
 /**
  *
- * @author Nordine
+ * @author user
  */
-public class DAOCity extends GenericDynaRepository<City> {
-
-    private static final long serialVersionUID = 1685878902341815820L;
+public interface Setup extends Serializable{
+    void setup();
+    void configureConnection();
 
 }

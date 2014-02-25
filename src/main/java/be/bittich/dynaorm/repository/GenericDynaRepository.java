@@ -15,15 +15,16 @@
  */
 package be.bittich.dynaorm.repository;
 
+import be.bittich.dynaorm.core.TableColumn;
 import be.bittich.dynaorm.annotation.PrimaryKey;
 import be.bittich.dynaorm.annotation.TableFromDB;
 import be.bittich.dynaorm.core.AnnotationProcessor;
+import static be.bittich.dynaorm.core.AnnotationProcessor.getAnnotedFields;
 import be.bittich.dynaorm.dialect.Dialect;
-import static be.bittich.dynaorm.dialect.StringQueryBuilder.conditionPrimaryKeysBuilder;
+import static be.bittich.dynaorm.core.StringQueryBuilder.conditionPrimaryKeysBuilder;
 import be.bittich.dynaorm.exception.ColumnNotFoundException;
 import be.bittich.dynaorm.exception.EntityDoesNotExistException;
 import be.bittich.dynaorm.exception.RequestInvalidException;
-import be.bittich.dynaorm.ioc.BasicContainer;
 import static be.bittich.dynaorm.ioc.BasicContainer.getContainer;
 import be.bittich.dynaorm.maping.ColumnMapping;
 import be.bittich.dynaorm.maping.DynaRowProcessor;
@@ -57,8 +58,8 @@ public class GenericDynaRepository<T> implements DynaRepository<T> {
     protected Dialect dialect;
     protected TableColumn tableColumn;
     protected RowProcessor rowProcessor;
-    
-    private Class<T > getClazz() {
+
+    private Class<T> getClazz() {
         Class<T> clazzz = (Class<T>) ((ParameterizedType) (getClass()
                 .getGenericSuperclass())).getActualTypeArguments()[0];
 
@@ -80,12 +81,11 @@ public class GenericDynaRepository<T> implements DynaRepository<T> {
     }
 
     @Override
-    public List findAll() {
+    public List<T> findAll() {
 
         try {
             String request = dialect.selectAll(tableColumn.getTableName());
-            List<T> results = runner.query(request,
-                    getListHandler());
+            List<T> results = runner.query(request, getListHandler());
             return results;
         } catch (SQLException e) {
             LOG.log(Level.INFO, "erreur : {0}", e.getMessage());
@@ -95,10 +95,13 @@ public class GenericDynaRepository<T> implements DynaRepository<T> {
 
     @Override
     public T findById(T t) {
-        Map<Field, PrimaryKey> fieldPrimary = AnnotationProcessor.getAnnotedFields(t, PrimaryKey.class);
+        //get the primary keys
+        Map<Field, PrimaryKey> fieldPrimary = getAnnotedFields(t, PrimaryKey.class);
         String req = dialect.selectAll(tableColumn.getTableName());
         try {
+            //construct the request with parameters as a list of string(key is the request)
             KeyValue<String, List<String>> pkBuilt = conditionPrimaryKeysBuilder(t, fieldPrimary, dialect);
+            //select * from T where ..
             req = req.concat(pkBuilt.getKey());
             T result = runner.query(req, getHandler(), pkBuilt.getValue().toArray());
             return result;
@@ -117,7 +120,7 @@ public class GenericDynaRepository<T> implements DynaRepository<T> {
             if (tFromDB == null) {
                 throw new EntityDoesNotExistException();
             }
-            Map<Field, PrimaryKey> fieldPrimary = AnnotationProcessor.getAnnotedFields(t, PrimaryKey.class);
+            Map<Field, PrimaryKey> fieldPrimary = getAnnotedFields(t, PrimaryKey.class);
             String req = dialect.delete(tableColumn.getTableName());
             KeyValue<String, List<String>> pkBuilt = conditionPrimaryKeysBuilder(t, fieldPrimary, dialect);
             req = req.concat(pkBuilt.getKey());
@@ -133,7 +136,7 @@ public class GenericDynaRepository<T> implements DynaRepository<T> {
 
     @Override
     public List<T> findBy(String columnName, String value) throws ColumnNotFoundException, RequestInvalidException {
-        Integer type = tableColumn.getColumns().get(columnName);
+        Integer type = tableColumn.getTypeOfColumn(columnName);
         if (type == null) {
             throw new ColumnNotFoundException(String.format("Column name %s does'nt exist on the table %s", columnName, tableColumn.getTableName()));
         }
@@ -165,14 +168,14 @@ public class GenericDynaRepository<T> implements DynaRepository<T> {
         try {
             Map<Field, PrimaryKey> fieldPrimary = AnnotationProcessor.getAnnotedFields(t, PrimaryKey.class);
             KeyValue<String, List<String>> pkBuilt = conditionPrimaryKeysBuilder(t, fieldPrimary, dialect);
+            //where...
             String conditions = pkBuilt.getKey();
-            ColumnMapping mappingUtil = BasicContainer.getContainer().injectSafely("columnMapping");
+            ColumnMapping mappingUtil = getContainer().injectSafely("columnMapping");
             KeyValue<List<String>, List<String>> colVal = mappingUtil.getColumnsValuesMap(t, tableColumn);
             String request = dialect.update(tableColumn.getTableName(), colVal.getKey(), colVal.getValue(), conditions);
             colVal.getValue().addAll(pkBuilt.getValue());
             runner.update(request, colVal.getValue().toArray());
         } catch (IllegalAccessException | SQLException | RequestInvalidException ex) {
-
             LOG.log(Level.SEVERE, null, ex);
         }
 
@@ -185,7 +188,7 @@ public class GenericDynaRepository<T> implements DynaRepository<T> {
      */
     protected void persist(T t) {
         try {
-            ColumnMapping mappingUtil = BasicContainer.getContainer().injectSafely("columnMapping");
+            ColumnMapping mappingUtil = getContainer().injectSafely("columnMapping");
             KeyValue<List<String>, List<String>> colVal = mappingUtil.getColumnsValuesMap(t, tableColumn);
             String request = dialect.insert(tableColumn.getTableName(), colVal.getKey(), colVal.getValue());
             runner.update(request, colVal.getValue().toArray());
@@ -205,6 +208,7 @@ public class GenericDynaRepository<T> implements DynaRepository<T> {
         ResultSetHandler<T> handler = new BeanHandler(clazz, rowProcessor);
         return handler;
     }
+    
 
     private void configure() {
         runner = getContainer().injectSafely("queryRunner");
@@ -223,7 +227,7 @@ public class GenericDynaRepository<T> implements DynaRepository<T> {
                 tableColumn.addColumn(name, type);
             }
         } catch (SQLException ex) {
-           LOG.log(Level.SEVERE, null, ex);
+            LOG.log(Level.SEVERE, null, ex);
         }
     }
 }

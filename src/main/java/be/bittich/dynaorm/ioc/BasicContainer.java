@@ -101,7 +101,7 @@ public class BasicContainer implements Serializable {
     }
 
     /**
-     * Safely containerBeans a bean from the container. If the bean doesn't
+     * Safely inject a bean from the container. If the bean doesn't
      * exist, it returns null
      *
      * @param <T>

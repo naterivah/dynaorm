@@ -17,7 +17,7 @@ package be.bittich.dynaorm.maping;
 
 import be.bittich.dynaorm.annotation.MetaColumn;
 import be.bittich.dynaorm.annotation.PrimaryKey;
-import be.bittich.dynaorm.repository.TableColumn;
+import be.bittich.dynaorm.core.TableColumn;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -35,6 +35,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
  * @author Nordine Bittich
  */
 public class BasicColumnMapping implements ColumnMapping {
+    private static final long serialVersionUID = 8850960551168456580L;
 
     @Override
     public <T> Map<String, Field> mapToSQLColumns(T obj, TableColumn tableColumn) {

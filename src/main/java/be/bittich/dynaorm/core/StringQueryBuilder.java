@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package be.bittich.dynaorm.dialect;
+package be.bittich.dynaorm.core;
 
 import be.bittich.dynaorm.annotation.PrimaryKey;
-import be.bittich.dynaorm.core.AnnotationProcessor;
+import be.bittich.dynaorm.dialect.Dialect;
 import be.bittich.dynaorm.exception.RequestInvalidException;
 import java.lang.reflect.Field;
 import java.util.LinkedList;
@@ -29,8 +29,17 @@ import org.apache.commons.collections4.keyvalue.DefaultKeyValue;
  *
  * @author Nordine
  */
-public class StringQueryBuilder {
-
+public class StringQueryBuilder 
+{
+    /**
+     * Return the request to get a row value mapped with the parameters
+     * @param <T>
+     * @param t
+     * @param fieldPrimary
+     * @param dialect
+     * @return
+     * @throws RequestInvalidException 
+     */
     public static <T> KeyValue<String, List<String>> conditionPrimaryKeysBuilder(T t, Map<Field, PrimaryKey> fieldPrimary, Dialect dialect) throws RequestInvalidException {
         boolean firstIteration = true;
         String req = "";
@@ -49,5 +58,7 @@ public class StringQueryBuilder {
         }
         return new DefaultKeyValue(req, parameters);
     }
+    
+    
     
 }
