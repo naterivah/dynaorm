@@ -15,15 +15,22 @@
  */
 package be.bittich.dynaorm.maping;
 
+import be.bittich.dynaorm.annotation.Inverse;
+import be.bittich.dynaorm.exception.ColumnNotFoundException;
+import be.bittich.dynaorm.exception.RequestInvalidException;
 import be.bittich.dynaorm.repository.DynaRepository;
 import be.bittich.dynaorm.repository.GenericDynaRepository;
 import java.io.Serializable;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Nordine
  */
 public class ReflectionMapper implements Serializable {
+
     private static final long serialVersionUID = 3836286981898895355L;
 
     /**
@@ -36,7 +43,7 @@ public class ReflectionMapper implements Serializable {
      * @return
      */
     public static <E> E lazyLoadRelation(E e, final Class<E> clazz) {
-        
+
         DynaRepository<E> lazyRepo = new GenericDynaRepository() {
             @Override
             public Class<E> getClazz() {
@@ -44,5 +51,21 @@ public class ReflectionMapper implements Serializable {
             }
         };
         return clazz.cast(lazyRepo.findById(e));
+    }
+
+    public static <E> List<E> lazyLoadRelationList(String value, String columnName, final Class<E> clazz) {
+
+        DynaRepository<E> lazyRepo = new GenericDynaRepository() {
+            @Override
+            public Class<E> getClazz() {
+                return clazz;
+            }
+        };
+        try {
+            return lazyRepo.findBy(columnName, value);
+        } catch (ColumnNotFoundException | RequestInvalidException ex) {
+            Logger.getLogger(ReflectionMapper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 }

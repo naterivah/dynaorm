@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Owner {
+public @interface Inverse {
 
-    String fieldName();
+    String columnInverse();
 }
