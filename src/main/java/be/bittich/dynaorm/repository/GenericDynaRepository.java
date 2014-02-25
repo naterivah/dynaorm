@@ -86,6 +86,10 @@ public class GenericDynaRepository<T> implements DynaRepository<T> {
         try {
             String request = dialect.selectAll(tableColumn.getTableName());
             List<T> results = runner.query(request, getListHandler());
+            //just before returning the list
+            for (T result : results) {
+                this.loadInvoker(result);
+            }
             return results;
         } catch (SQLException e) {
             LOG.log(Level.INFO, "erreur : {0}", e.getMessage());
@@ -104,6 +108,8 @@ public class GenericDynaRepository<T> implements DynaRepository<T> {
             //select * from T where ..
             req = req.concat(pkBuilt.getKey());
             T result = runner.query(req, getHandler(), pkBuilt.getValue().toArray());
+            //just before returning the result
+            this.loadInvoker(result);
             return result;
         } catch (SQLException ex) {
             Logger.getLogger(GenericDynaRepository.class.getName()).log(Level.SEVERE, ex.getSQLState(), ex);
@@ -149,6 +155,10 @@ public class GenericDynaRepository<T> implements DynaRepository<T> {
                     getListHandler(), value);
         } catch (SQLException ex) {
             LOG.log(Level.SEVERE, null, ex);
+        }
+        for (T result : results) {
+            this.loadInvoker(result);
+
         }
         return results;
     }
@@ -209,8 +219,6 @@ public class GenericDynaRepository<T> implements DynaRepository<T> {
         return handler;
     }
 
-
-
     private void configure() {
         runner = getContainer().injectSafely("queryRunner");
         dialect = getContainer().injectSafely("dialect");
@@ -231,4 +239,15 @@ public class GenericDynaRepository<T> implements DynaRepository<T> {
             LOG.log(Level.SEVERE, null, ex);
         }
     }
+
+    /**
+     * Add a callback template method for findById and findAll Mainly used for
+     * lazy loading relation. Just override it and it will works!
+     *
+     * @param t
+     */
+    protected void loadInvoker(T t) {
+        //do nothing by default
+    }
+
 }
