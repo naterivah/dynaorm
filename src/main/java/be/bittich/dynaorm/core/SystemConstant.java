@@ -22,7 +22,7 @@ import java.util.Map;
  *
  * @author Nordine
  */
-public interface SystemConstant {
+public final class SystemConstant {
 
     /**
      * *
@@ -56,5 +56,7 @@ public interface SystemConstant {
 
         }
     };
-
+    public static void addDriver(String shortName,String completeName){
+        DRIVER_NAME.put(shortName, completeName);
+    }
 }

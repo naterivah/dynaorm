@@ -25,5 +25,5 @@ import java.io.Serializable;
 public interface Setup extends Serializable{
     void setup();
     void configureConnection();
-
+    void configureDialect();
 }

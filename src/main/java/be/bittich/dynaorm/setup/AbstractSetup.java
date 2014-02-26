@@ -30,7 +30,10 @@ import java.util.Properties;
 public abstract class AbstractSetup implements Setup {
 
     private static final long serialVersionUID = 2619664551764003392L;
+    public static final String DIALECT_KEY = "dialect";
+
     private Properties dbProperties;
+    private Dialect dialect;
 
     public Properties getDbProperties() {
         return dbProperties;
@@ -41,11 +44,12 @@ public abstract class AbstractSetup implements Setup {
         return this;
     }
 
-    public AbstractSetup(Properties dbProperties) {
+    public AbstractSetup(Properties dbProperties, Dialect dialect) {
         this.dbProperties = dbProperties;
+        this.dialect = dialect;
     }
 
-    public AbstractSetup() {
+    private AbstractSetup() {
     }
 
     /**
@@ -54,7 +58,14 @@ public abstract class AbstractSetup implements Setup {
      */
     @Override
     public void configureConnection() {
+        //before creation of the connection. In case if the user have implemented his own dialect and driver
+        registerDriver();
+        if (dbProperties == null) {
+            throw new RuntimeException("DB Properties should'nt be empty!");
+
+        }
         String driver = dbProperties.getProperty("driver");
+
         Boolean autoCommit = Boolean.parseBoolean(dbProperties.getProperty("autocommit"));
         ConnectionDB conn = new BasicConnectionDBImpl().
                 setDriver(DRIVER_NAME.get(driver))
@@ -67,14 +78,29 @@ public abstract class AbstractSetup implements Setup {
     }
 
     @Override
+    public void configureDialect() {
+        if (dialect == null) {
+            throw new RuntimeException("Dialect should'nt be empty!");
+        }
+        registerBean(DIALECT_KEY, dialect);
+    }
+
+    @Override
     public void setup() {
         configureConnection();
+        configureDialect();
         buildContainer();
         doSetup();
     }
 
-
-
     protected abstract void doSetup();
+
+    /**
+     * if you want to register a driver BEFORE the connection is made, you
+     * should override that method. You can add multiple driver i.e :
+     * SystemConstant.addDriver("mssql","sun.jdbc.odbc.JdbcOdbcDriver");
+     */
+    protected void registerDriver() {
+    }
 
 }
