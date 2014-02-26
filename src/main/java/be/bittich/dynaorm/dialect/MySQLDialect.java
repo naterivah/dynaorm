@@ -15,8 +15,11 @@
  */
 package be.bittich.dynaorm.dialect;
 
+import static be.bittich.dynaorm.core.DynaUtils.getDateOrNull;
 import be.bittich.dynaorm.exception.RequestInvalidException;
 import com.google.common.base.Joiner;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
@@ -43,6 +46,7 @@ public class MySQLDialect implements Dialect {
     public static final String INSERT = "INSERT INTO %s (%s) VALUES (%s)";
     public static final String UPDATE = "UPDATE %s SET %s %s";
     public static final String QUOTES = "`%s`";
+    public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     @Override
     public String selectAll(String tableName) {
@@ -114,11 +118,22 @@ public class MySQLDialect implements Dialect {
         return String.format(REQ_FOR_TABLE_COLUMNS, tableName);
     }
 
+    @Override
+    /**
+     * chain ?
+     */
     public String doFilterValue(String fieldVal) {
         //Boolean filter
         if (fieldVal.equalsIgnoreCase("true") || fieldVal.equalsIgnoreCase("false")) {
             fieldVal = Boolean.parseBoolean(fieldVal) ? "1" : "0";
+            return fieldVal;
+        }
 
+        Date date;
+        //Date filter
+        if ((date = getDateOrNull(fieldVal)) != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+            return sdf.format(date);
         }
         return fieldVal;
     }
