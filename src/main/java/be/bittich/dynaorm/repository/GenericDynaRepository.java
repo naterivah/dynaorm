@@ -247,7 +247,7 @@ public abstract class GenericDynaRepository<T> implements DynaRepository<T> {
         dialect = getContainer().injectSafely("dialect");
         // default tableName
         TableFromDB table = AnnotationProcessor.getAnnotationType(clazz, TableFromDB.class);
-        String tableName = clazz.getName().toLowerCase();
+        String tableName = clazz.getSimpleName().toLowerCase();
         if (table != null && !isEmpty(table.tableName())) {
             tableName = table.tableName();
         }
