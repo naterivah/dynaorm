@@ -70,4 +70,17 @@ public class DynaUtils {
         }
     }
 
+    /**
+     * check if one is null return true same than is .. == null || ...==null || ...
+     * @param objects
+     */
+    public static boolean isNull(Object... objects) {
+        for (Object o : objects) {
+            if (o == null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
