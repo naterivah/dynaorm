@@ -35,6 +35,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
  * @author Nordine Bittich
  */
 public class BasicColumnMapping implements ColumnMapping {
+
     private static final long serialVersionUID = 8850960551168456580L;
 
     @Override
@@ -63,6 +64,7 @@ public class BasicColumnMapping implements ColumnMapping {
 
     /**
      * do the mapping
+     *
      * @throws java.lang.IllegalAccessException
      */
     @Override
@@ -84,7 +86,9 @@ public class BasicColumnMapping implements ColumnMapping {
                             throw new NullPointerException(String.format("Column %s should not be null!", columnName));
                         }
                     }
-                    values.add(field.get(t).toString());
+                    String fieldVal = field.get(t).toString();
+
+                    values.add(fieldVal);
                     columnNames.add(columnName);
                 }
 

@@ -38,11 +38,13 @@ public interface Dialect {
 
     String insert(String tableName, List<String> columns, List<String> values);
 
-    String update(String tableName, List<String> columns, List<String> values,String condition);
+    String update(String tableName, List<String> columns, List<String> values, String condition);
 
     String delete(String tableName);
 
     String type();
 
     String requestForTableColumns(String tableName);
+
+    String doFilterValue(String fieldVal);
 }

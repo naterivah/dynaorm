@@ -32,6 +32,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -87,8 +88,11 @@ public class GenericDynaRepository<T> implements DynaRepository<T> {
             String request = dialect.selectAll(tableColumn.getTableName());
             List<T> results = runner.query(request, getListHandler());
             //just before returning the list
-            for (T result : results) {
-                this.loadInvoker(result);
+            if (results != null) {
+
+                for (T result : results) {
+                    this.loadInvoker(result);
+                }
             }
             return results;
         } catch (SQLException e) {
@@ -109,7 +113,10 @@ public class GenericDynaRepository<T> implements DynaRepository<T> {
             req = req.concat(pkBuilt.getKey());
             T result = runner.query(req, getHandler(), pkBuilt.getValue().toArray());
             //just before returning the result
-            this.loadInvoker(result);
+            if (result != null) {
+                this.loadInvoker(result);
+
+            }
             return result;
         } catch (SQLException ex) {
             Logger.getLogger(GenericDynaRepository.class.getName()).log(Level.SEVERE, ex.getSQLState(), ex);
@@ -184,11 +191,26 @@ public class GenericDynaRepository<T> implements DynaRepository<T> {
             KeyValue<List<String>, List<String>> colVal = mappingUtil.getColumnsValuesMap(t, tableColumn);
             String request = dialect.update(tableColumn.getTableName(), colVal.getKey(), colVal.getValue(), conditions);
             colVal.getValue().addAll(pkBuilt.getValue());
-            runner.update(request, colVal.getValue().toArray());
+            List<String> filteredValues = applyFilterValue(colVal.getValue());
+            runner.update(request, filteredValues.toArray());
         } catch (IllegalAccessException | SQLException | RequestInvalidException ex) {
             LOG.log(Level.SEVERE, null, ex);
         }
 
+    }
+
+    /**
+     * Apply some filters for values. i.e in mysql you need to convert boolean by 0 or 1
+     *
+     * @param list
+     * @return
+     */
+    protected List<String> applyFilterValue(List<String> list) {
+        List<String> filteredValues = new LinkedList<>();
+        for (String val : list) {
+            filteredValues.add(dialect.doFilterValue(val));
+        }
+        return filteredValues;
     }
 
     /**
@@ -201,7 +223,8 @@ public class GenericDynaRepository<T> implements DynaRepository<T> {
             ColumnMapping mappingUtil = getContainer().injectSafely("columnMapping");
             KeyValue<List<String>, List<String>> colVal = mappingUtil.getColumnsValuesMap(t, tableColumn);
             String request = dialect.insert(tableColumn.getTableName(), colVal.getKey(), colVal.getValue());
-            runner.update(request, colVal.getValue().toArray());
+            List<String> filteredValues = applyFilterValue(colVal.getValue());
+            runner.update(request, filteredValues.toArray());
         } catch (IllegalAccessException | SQLException ex) {
 
             LOG.log(Level.SEVERE, null, ex);
@@ -241,8 +264,7 @@ public class GenericDynaRepository<T> implements DynaRepository<T> {
     }
 
     /**
-     * Add a callback template method for findById and findAll Mainly used for
-     * lazy loading relation. Just override it and it will works!
+     * Add a callback template method for findById and findAll Mainly used for lazy loading relation. Just override it and it will works!
      *
      * @param t
      */

@@ -36,12 +36,13 @@ public class MySQLDialect implements Dialect {
     public static final String STARTLIKE = "LIKE % ";
     public static final String ENDLIKE = "LIKE %{} ";
     public static final String EXACTLYLIKE = "LIKE % % ";
-    public static final String EQUALITY = "= ";
+    public static final String EQUALITY = " = ";
     public static final String DELETE = "DELETE ";
     public static final String REQ_FOR_TABLE_COLUMNS = "SELECT * FROM %s WHERE 1=0";
     public static final String ORDER_BY = "ORDER BY ";
     public static final String INSERT = "INSERT INTO %s (%s) VALUES (%s)";
     public static final String UPDATE = "UPDATE %s SET %s %s";
+    public static final String QUOTES = "`%s`";
 
     @Override
     public String selectAll(String tableName) {
@@ -69,10 +70,14 @@ public class MySQLDialect implements Dialect {
     @Override
     public String insert(String tableName, List<String> columns, List<String> values) {
         List<String> replacementValues = new LinkedList();
+        List<String> replacementColumns = new LinkedList();
         for (String value : values) {
             replacementValues.add(REPLACEMENT_VALUE);
         }
-        String cols = Joiner.on(',').join(columns);
+        for (String column : columns) {
+            replacementColumns.add(String.format(QUOTES, column));
+        }
+        String cols = Joiner.on(',').join(replacementColumns);
         String vals = Joiner.on(",").join(replacementValues);
         return String.format(INSERT, tableName, cols, vals);
     }
@@ -81,6 +86,7 @@ public class MySQLDialect implements Dialect {
     public String update(String tableName, List<String> columns, List<String> values, String condition) {
         List<String> replacementValues = new LinkedList();
         for (String column : columns) {
+            column = String.format(QUOTES, column);
             replacementValues.add(column.concat(EQUALITY).concat(REPLACEMENT_VALUE));
         }
         String req = Joiner.on(",").join(replacementValues);
@@ -108,4 +114,12 @@ public class MySQLDialect implements Dialect {
         return String.format(REQ_FOR_TABLE_COLUMNS, tableName);
     }
 
+    public String doFilterValue(String fieldVal) {
+        //Boolean filter
+        if (fieldVal.equalsIgnoreCase("true") || fieldVal.equalsIgnoreCase("false")) {
+            fieldVal = Boolean.parseBoolean(fieldVal) ? "1" : "0";
+
+        }
+        return fieldVal;
+    }
 }

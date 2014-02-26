@@ -53,6 +53,14 @@ public class ReflectionMapper implements Serializable {
         return clazz.cast(lazyRepo.findById(e));
     }
 
+    /**
+     * That method does a basic findBy to get the list of entities related to the field
+     * @param <E>
+     * @param value
+     * @param columnName
+     * @param clazz
+     * @return 
+     */
     public static <E> List<E> lazyLoadRelationList(String value, String columnName, final Class<E> clazz) {
 
         DynaRepository<E> lazyRepo = new GenericDynaRepository() {
