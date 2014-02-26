@@ -18,7 +18,11 @@ package be.bittich.dynaorm.maping;
 import be.bittich.dynaorm.annotation.MetaColumn;
 import be.bittich.dynaorm.annotation.PrimaryKey;
 import be.bittich.dynaorm.core.TableColumn;
+import be.bittich.dynaorm.dialect.Dialect;
 import java.lang.reflect.Field;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -86,9 +90,9 @@ public class BasicColumnMapping implements ColumnMapping {
                             throw new NullPointerException(String.format("Column %s should not be null!", columnName));
                         }
                     }
-                    String fieldVal = field.get(t).toString();
-
-                    values.add(fieldVal);
+                    Object fieldVal = field.get(t);
+                    String valString = doFilterBeforeApplyToString(fieldVal);
+                    values.add(valString);
                     columnNames.add(columnName);
                 }
 
@@ -99,5 +103,15 @@ public class BasicColumnMapping implements ColumnMapping {
         }
         return new DefaultKeyValue<List<String>, List<String>>(columnNames, values);
 
+    }
+
+    private String doFilterBeforeApplyToString(Object object) {
+        String valString = object.toString();
+        //check if it's a date
+        if (object instanceof Date) {
+            DateFormat sdf = new SimpleDateFormat(Dialect.DATE_FORMAT);
+            valString = sdf.format((Date) object);
+        }
+        return valString;
     }
 }

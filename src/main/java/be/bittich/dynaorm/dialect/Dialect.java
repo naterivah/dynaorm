@@ -25,6 +25,7 @@ import java.util.List;
 public interface Dialect {
 
     static final String REPLACEMENT_VALUE = "? ";
+     static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     String selectAll(String tableName);
 

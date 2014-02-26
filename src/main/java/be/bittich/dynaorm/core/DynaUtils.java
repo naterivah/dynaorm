@@ -19,11 +19,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import static java.lang.String.format;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -53,25 +54,11 @@ public class DynaUtils {
 
     }
 
+
     /**
-     * Check if a string value is a date with the default format used when we call toString() from java.util.Date
+     * check if one is null return true same than is .. == null || ...==null ||
+     * ...
      *
-     * @param maybeDate
-     * @return
-     */
-    public static Date getDateOrNull(String maybeDate) {
-
-        try {
-            DateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
-            format.setLenient(false);
-            return format.parse(maybeDate);
-        } catch (ParseException e) {
-            return null;
-        }
-    }
-
-    /**
-     * check if one is null return true same than is .. == null || ...==null || ...
      * @param objects
      */
     public static boolean isNull(Object... objects) {
