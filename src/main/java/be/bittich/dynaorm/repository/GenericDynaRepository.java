@@ -50,11 +50,11 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
  * @author Nordine
  * @param <T>
  */
-public class GenericDynaRepository<T> implements DynaRepository<T> {
+public abstract class GenericDynaRepository<T> implements DynaRepository<T> {
 
     private static final long serialVersionUID = 1L;
     protected static final Logger LOG = Logger.getLogger("GenericDynaRepository");
-    private final Class<T> clazz;
+    private Class<T> clazz;
     protected QueryRunner runner;
     protected Dialect dialect;
     protected TableColumn tableColumn;
@@ -247,7 +247,10 @@ public class GenericDynaRepository<T> implements DynaRepository<T> {
         dialect = getContainer().injectSafely("dialect");
         // default tableName
         TableFromDB table = AnnotationProcessor.getAnnotationType(clazz, TableFromDB.class);
-        String tableName = table != null && !isEmpty(table.tableName()) ? table.tableName() : table.tableName();
+        String tableName = clazz.getName().toLowerCase();
+        if (table != null && !isEmpty(table.tableName())) {
+            tableName = table.tableName();
+        }
         tableColumn = new TableColumn(tableName);
         rowProcessor = new DynaRowProcessor(tableColumn);
         try {
