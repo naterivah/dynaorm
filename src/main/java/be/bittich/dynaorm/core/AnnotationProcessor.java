@@ -35,7 +35,7 @@ public class AnnotationProcessor {
             Field privateStringField = clazz.getDeclaredField(fieldName);
 
             privateStringField.setAccessible(true);
-            fieldValue = privateStringField.get(obj).toString();
+            fieldValue = privateStringField.get(obj) == null ? null : privateStringField.get(obj).toString();;
 
         } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException | NullPointerException ex) {
             Logger.getLogger(DynaUtils.class.getName()).log(Level.SEVERE, "Empty value, did you forget to set the value on your object?", ex);

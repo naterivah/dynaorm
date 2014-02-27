@@ -31,6 +31,7 @@ import be.bittich.dynaorm.maping.DynaRowProcessor;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
@@ -255,10 +256,11 @@ public abstract class GenericDynaRepository<T> implements DynaRepository<T> {
         rowProcessor = new DynaRowProcessor(tableColumn);
         try {
             ResultSet rs = runner.getDataSource().getConnection().prepareStatement(dialect.requestForTableColumns(tableName)).executeQuery();
-            Integer nbColumns = rs.getMetaData().getColumnCount();
+            ResultSetMetaData metaData= rs.getMetaData();
+            Integer nbColumns = metaData.getColumnCount();
             for (int i = 1; i <= nbColumns; i++) {
-                String name = rs.getMetaData().getColumnName(i);
-                int type = rs.getMetaData().getColumnType(i);
+                String name = metaData.getColumnName(i);
+                int type = metaData.getColumnType(i);
                 tableColumn.addColumn(name, type);
             }
         } catch (SQLException ex) {
