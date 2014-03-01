@@ -66,4 +66,10 @@ public class Bean<T> implements Serializable {
         return id;
     }
 
+    @Override
+    public String toString() {
+        return super.toString(); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+
 }
