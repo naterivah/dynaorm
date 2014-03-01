@@ -18,7 +18,6 @@ package be.bittich.dynaorm.ioc;
 import be.bittich.dynaorm.exception.BeanAlreadyExistException;
 import be.bittich.dynaorm.exception.BeanNotFoundException;
 import be.bittich.dynaorm.exception.IOCContainerException;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -28,7 +27,7 @@ import java.util.logging.Logger;
  *
  * @author Nordine
  */
-public class BasicContainer implements Serializable {
+public class BasicContainer implements  Container {
 
     private static final long serialVersionUID = -7812658198232446401L;
 
@@ -60,6 +59,7 @@ public class BasicContainer implements Serializable {
      * @throws BeanAlreadyExistException
      * @throws IOCContainerException
      */
+    @Override
     public <T> void addBean(Bean<T> bean) throws BeanAlreadyExistException, IOCContainerException {
         if (containerBeans.containsValue(bean)) {
             throw new BeanAlreadyExistException("IOC exception: bean already exists");
@@ -77,6 +77,7 @@ public class BasicContainer implements Serializable {
      * @param id
      * @return
      */
+    @Override
     public <T> Bean<T> releaseBean(String id) {
         return containerBeans.remove(id);
 
@@ -90,6 +91,7 @@ public class BasicContainer implements Serializable {
      * @return
      * @throws BeanNotFoundException
      */
+    @Override
     public <T> T inject(String id) throws BeanNotFoundException {
         if (containerBeans.get(id) == null) {
             throw new BeanNotFoundException("Bean not found");
@@ -108,6 +110,7 @@ public class BasicContainer implements Serializable {
      * @param id
      * @return bean
      */
+    @Override
     public <T> T injectSafely(String id) {
         T bean = null;
         try {
@@ -124,6 +127,7 @@ public class BasicContainer implements Serializable {
      * @param tClazz
      * @return 
      */
+    @Override
     public <T> T newInstance(Class<T> tClazz){
         try {
             return tClazz.newInstance();
