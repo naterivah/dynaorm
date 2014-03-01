@@ -18,6 +18,7 @@ package be.bittich.dynaorm.ioc;
 import be.bittich.dynaorm.exception.BeanAlreadyExistException;
 import be.bittich.dynaorm.exception.BeanNotFoundException;
 import be.bittich.dynaorm.exception.IOCContainerException;
+import static be.bittich.dynaorm.facad.IOCFacadGet.getContainer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -27,28 +28,14 @@ import java.util.logging.Logger;
  *
  * @author Nordine
  */
-public class BasicContainer implements  Container {
+public class BasicContainer implements Container {
 
     private static final long serialVersionUID = -7812658198232446401L;
 
-    private static BasicContainer container;
-
     private final Map<String, Bean> containerBeans = new HashMap();
 
-    private BasicContainer() {
+    public BasicContainer() {
 
-    }
-
-    /**
-     * Return the container unique instance
-     *
-     * @return the container
-     */
-    public static BasicContainer getContainer() {
-        if (container == null) {
-            container = new BasicContainer();
-        }
-        return container;
     }
 
     /**
@@ -103,8 +90,8 @@ public class BasicContainer implements  Container {
     }
 
     /**
-     * Safely inject a bean from the container. If the bean doesn't
-     * exist, it returns null
+     * Safely inject a bean from the container. If the bean doesn't exist, it
+     * returns null
      *
      * @param <T>
      * @param id
@@ -116,25 +103,39 @@ public class BasicContainer implements  Container {
         try {
             bean = this.inject(id);
         } catch (BeanNotFoundException ex) {
-            Logger.getLogger(BasicContainer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(BasicContainer.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+
         }
         return bean;
     }
-    
+
     /**
      * Create a new instance of t. the bean is never saved in the container
+     *
      * @param <T>
      * @param tClazz
-     * @return 
+     * @return
      */
     @Override
-    public <T> T newInstance(Class<T> tClazz){
+    public <T> T newInstance(Class<T> tClazz) {
         try {
             return tClazz.newInstance();
         } catch (InstantiationException | IllegalAccessException ex) {
-            Logger.getLogger(BasicContainer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(BasicContainer.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+
         }
         return null;
+    }
+
+    @Override
+    public <T> void registerBean(String label, T t) {
+        Bean<T> bean = new Bean(label, t);
+        try {
+            getContainer().addBean(bean);
+        } catch (BeanAlreadyExistException | IOCContainerException ex) {
+            Logger.getLogger(BasicContainer.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+
+        }
     }
 
 }

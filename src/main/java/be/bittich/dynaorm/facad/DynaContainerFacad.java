@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 user.
+ * Copyright 2014 Nordine.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package be.bittich.dynaorm.setup;
+package be.bittich.dynaorm.facad;
 
 import be.bittich.dynaorm.ioc.Container;
-import java.io.Serializable;
 
 /**
  *
- * @author user
+ * @author Nordine
  */
-public interface Setup extends Serializable{
-    void setup(Container container);
-    void configureConnection();
-    void configureDialect();
+public class DynaContainerFacad {
+
+    private static Container container;
+
+    private DynaContainerFacad() {
+    }
+
+    /**
+     * Return the container unique instance
+     *
+     * @return the container
+     */
+    protected static Container getContainer() {
+
+        return container;
+    }
+
+    protected static void setContainer(Container cont) {
+        container = cont;
+    }
 }

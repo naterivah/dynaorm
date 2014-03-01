@@ -15,7 +15,6 @@
  */
 package be.bittich.dynaorm.maping;
 
-import be.bittich.dynaorm.annotation.Inverse;
 import be.bittich.dynaorm.exception.ColumnNotFoundException;
 import be.bittich.dynaorm.exception.RequestInvalidException;
 import be.bittich.dynaorm.repository.DynaRepository;

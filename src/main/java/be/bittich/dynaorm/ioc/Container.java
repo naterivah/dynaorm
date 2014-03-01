@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package be.bittich.dynaorm.ioc;
 
 import be.bittich.dynaorm.exception.BeanAlreadyExistException;
@@ -48,8 +47,8 @@ public interface Container extends Serializable {
     <T> T inject(String id) throws BeanNotFoundException;
 
     /**
-     * Safely inject a bean from the container. If the bean doesn't
-     * exist, it returns null
+     * Safely inject a bean from the container. If the bean doesn't exist, it
+     * returns null
      *
      * @param <T>
      * @param id
@@ -59,6 +58,7 @@ public interface Container extends Serializable {
 
     /**
      * Create a new instance of t. the bean is never saved in the container
+     *
      * @param <T>
      * @param tClazz
      * @return
@@ -73,5 +73,13 @@ public interface Container extends Serializable {
      * @return
      */
     <T> Bean<T> releaseBean(String id);
-    
+
+    /**
+     * Register a new bean, if the bean already exists, nothing happens
+     *
+     * @param <T>
+     * @param t
+     * @param label
+     */
+    <T> void registerBean(String label, T t);
 }

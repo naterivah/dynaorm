@@ -15,8 +15,8 @@
  */
 package be.bittich.dynaorm.maping;
 
-import be.bittich.dynaorm.ioc.BasicContainer;
 import be.bittich.dynaorm.core.TableColumn;
+import be.bittich.dynaorm.facad.IOCFacadGet;
 import be.bittich.dynaorm.sql.SQLTypeMap;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
@@ -46,7 +46,7 @@ public class DynaRowProcessor extends BasicRowProcessor {
         T bean = null;
         try {
             bean = type.newInstance();
-            ColumnMapping mapping = BasicContainer.getContainer().injectSafely("columnMapping");
+            ColumnMapping mapping = IOCFacadGet.getColumnMapping();
             Map<String, Field> mapper = mapping.mapToSQLColumns(bean, tableColumn);
             for (String columnName : mapper.keySet()) {
                 Field field = mapper.get(columnName);

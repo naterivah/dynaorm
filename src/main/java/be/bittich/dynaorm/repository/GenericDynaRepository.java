@@ -25,7 +25,9 @@ import static be.bittich.dynaorm.core.StringQueryBuilder.conditionPrimaryKeysBui
 import be.bittich.dynaorm.exception.ColumnNotFoundException;
 import be.bittich.dynaorm.exception.EntityDoesNotExistException;
 import be.bittich.dynaorm.exception.RequestInvalidException;
-import static be.bittich.dynaorm.ioc.BasicContainer.getContainer;
+import static be.bittich.dynaorm.facad.IOCFacadGet.getColumnMapping;
+import static be.bittich.dynaorm.facad.IOCFacadGet.getDialect;
+import static be.bittich.dynaorm.facad.IOCFacadGet.getQueryRunner;
 import be.bittich.dynaorm.maping.ColumnMapping;
 import be.bittich.dynaorm.maping.DynaRowProcessor;
 import java.lang.reflect.Field;
@@ -188,7 +190,7 @@ public abstract class GenericDynaRepository<T> implements DynaRepository<T> {
             KeyValue<String, List<String>> pkBuilt = conditionPrimaryKeysBuilder(t, fieldPrimary, dialect);
             //where...
             String conditions = pkBuilt.getKey();
-            ColumnMapping mappingUtil = getContainer().injectSafely("columnMapping");
+            ColumnMapping mappingUtil = getColumnMapping();
             KeyValue<List<String>, List<String>> colVal = mappingUtil.getColumnsValuesMap(t, tableColumn);
             String request = dialect.update(tableColumn.getTableName(), colVal.getKey(), colVal.getValue(), conditions);
             colVal.getValue().addAll(pkBuilt.getValue());
@@ -201,7 +203,8 @@ public abstract class GenericDynaRepository<T> implements DynaRepository<T> {
     }
 
     /**
-     * Apply some filters for values. i.e in mysql you need to convert boolean by 0 or 1
+     * Apply some filters for values. i.e in mysql you need to convert boolean
+     * by 0 or 1
      *
      * @param list
      * @return
@@ -221,7 +224,7 @@ public abstract class GenericDynaRepository<T> implements DynaRepository<T> {
      */
     protected void persist(T t) {
         try {
-            ColumnMapping mappingUtil = getContainer().injectSafely("columnMapping");
+            ColumnMapping mappingUtil = getColumnMapping();
             KeyValue<List<String>, List<String>> colVal = mappingUtil.getColumnsValuesMap(t, tableColumn);
             String request = dialect.insert(tableColumn.getTableName(), colVal.getKey(), colVal.getValue());
             List<String> filteredValues = applyFilterValue(colVal.getValue());
@@ -244,8 +247,8 @@ public abstract class GenericDynaRepository<T> implements DynaRepository<T> {
     }
 
     private void configure() {
-        runner = getContainer().injectSafely("queryRunner");
-        dialect = getContainer().injectSafely("dialect");
+        runner = getQueryRunner();
+        dialect = getDialect();
         // default tableName
         TableFromDB table = AnnotationProcessor.getAnnotationType(clazz, TableFromDB.class);
         String tableName = clazz.getSimpleName().toLowerCase();
@@ -256,7 +259,7 @@ public abstract class GenericDynaRepository<T> implements DynaRepository<T> {
         rowProcessor = new DynaRowProcessor(tableColumn);
         try {
             ResultSet rs = runner.getDataSource().getConnection().prepareStatement(dialect.requestForTableColumns(tableName)).executeQuery();
-            ResultSetMetaData metaData= rs.getMetaData();
+            ResultSetMetaData metaData = rs.getMetaData();
             Integer nbColumns = metaData.getColumnCount();
             for (int i = 1; i <= nbColumns; i++) {
                 String name = metaData.getColumnName(i);
@@ -269,7 +272,8 @@ public abstract class GenericDynaRepository<T> implements DynaRepository<T> {
     }
 
     /**
-     * Add a callback template method for findById and findAll Mainly used for lazy loading relation. Just override it and it will works!
+     * Add a callback template method for findById and findAll Mainly used for
+     * lazy loading relation. Just override it and it will works!
      *
      * @param t
      */

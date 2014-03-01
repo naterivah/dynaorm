@@ -20,7 +20,11 @@ import be.bittich.dynaorm.connection.impl.BasicConnectionDBImpl;
 import static be.bittich.dynaorm.core.SystemConstant.DRIVER_NAME;
 import be.bittich.dynaorm.dialect.Dialect;
 import static be.bittich.dynaorm.ioc.BasicConfigurationBean.buildContainer;
-import static be.bittich.dynaorm.ioc.BasicConfigurationBean.registerBean;
+import be.bittich.dynaorm.ioc.Container;
+
+import static be.bittich.dynaorm.facad.IOCFacadRegister.registerConnectionDB;
+import static be.bittich.dynaorm.facad.IOCFacadRegister.registerContainer;
+import static be.bittich.dynaorm.facad.IOCFacadRegister.registerDialect;
 import java.util.Properties;
 
 /**
@@ -30,7 +34,6 @@ import java.util.Properties;
 public abstract class AbstractSetup implements Setup {
 
     private static final long serialVersionUID = 2619664551764003392L;
-    public static final String DIALECT_KEY = "dialect";
 
     private Properties dbProperties;
     private Dialect dialect;
@@ -74,7 +77,7 @@ public abstract class AbstractSetup implements Setup {
                 .setPassword(dbProperties.getProperty("password"))
                 .setUrl(dbProperties.getProperty("url"))
                 .setInitialSize(Integer.parseInt(dbProperties.getProperty("initialSize")));
-        registerBean("connectionDB", conn);
+        registerConnectionDB(conn);
     }
 
     @Override
@@ -82,11 +85,12 @@ public abstract class AbstractSetup implements Setup {
         if (dialect == null) {
             throw new RuntimeException("Dialect should'nt be empty!");
         }
-        registerBean(DIALECT_KEY, dialect);
+        registerDialect(dialect);
     }
 
     @Override
-    public void setup() {
+    public final void setup(Container container) {
+        registerContainer(container);
         configureConnection();
         configureDialect();
         buildContainer();

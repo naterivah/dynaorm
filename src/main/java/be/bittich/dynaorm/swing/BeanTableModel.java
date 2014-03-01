@@ -15,9 +15,9 @@
  */
 package be.bittich.dynaorm.swing;
 
-import static be.bittich.dynaorm.ioc.BasicContainer.getContainer;
 import be.bittich.dynaorm.maping.ColumnMapping;
 import be.bittich.dynaorm.core.TableColumn;
+import static be.bittich.dynaorm.facad.IOCFacadGet.getColumnMapping;
 import be.bittich.dynaorm.swing.BeanTableModel.EditMode;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -44,7 +44,7 @@ public class BeanTableModel<T> extends AbstractTableModel {
 
     public BeanTableModel(Class<T> beanClass) {
         this.beanClass = beanClass;
-        this.columnMapper = getContainer().injectSafely("columnMapping");
+        this.columnMapper = getColumnMapping();
     }
 
     /**

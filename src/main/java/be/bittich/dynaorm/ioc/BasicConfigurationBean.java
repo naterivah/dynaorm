@@ -15,17 +15,12 @@
  */
 package be.bittich.dynaorm.ioc;
 
+import be.bittich.dynaorm.facad.IOCFacadGet;
 import be.bittich.dyanorm.connection.ConnectionDB;
-import static be.bittich.dynaorm.core.SystemConstant.DIALECT;
-import be.bittich.dynaorm.dialect.Dialect;
-import be.bittich.dynaorm.exception.BeanAlreadyExistException;
-import be.bittich.dynaorm.exception.BeanNotFoundException;
-import be.bittich.dynaorm.exception.IOCContainerException;
-import static be.bittich.dynaorm.ioc.BasicContainer.getContainer;
+import static be.bittich.dynaorm.facad.IOCFacadRegister.registerColumnMapping;
+import static be.bittich.dynaorm.facad.IOCFacadRegister.registerQueryRunner;
 import be.bittich.dynaorm.maping.BasicColumnMapping;
 import java.io.Serializable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.dbutils.QueryRunner;
 
 /**
@@ -43,55 +38,20 @@ public class BasicConfigurationBean implements Serializable {
      */
     public static void buildContainer() {
 
-       
         configureQueryRunner();
-      
-        registerBean("columnMapping", new BasicColumnMapping());
+
+        registerColumnMapping(new BasicColumnMapping());
     }
-
-
 
     /**
      * configure a QueryRunner bean
      */
     private static void configureQueryRunner() {
 
-        ConnectionDB bean;
-        try {
-            bean = getContainer().inject("connectionDB");
-            QueryRunner run = new QueryRunner(bean.getDataSource());
-            registerBean("queryRunner", run);
-        } catch (BeanNotFoundException ex) {
-            Logger.getLogger(BasicConfigurationBean.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        ConnectionDB bean = IOCFacadGet.getConnectionDB();
+        QueryRunner run = new QueryRunner(bean.getDataSource());
+        registerQueryRunner(run);
 
     }
 
-
-
-    public static void configureDialect(String dialect) {
-        Dialect dialectB;
-        try {
-            dialectB = (Dialect) Class.forName(DIALECT.get(dialect)).newInstance();
-            registerBean("dialect", dialectB);
-        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException ex) {
-            Logger.getLogger(BasicConfigurationBean.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    /**
-     * Register a new bean, if the bean already exists, nothing happens
-     *
-     * @param <T>
-     * @param t
-     * @param label
-     */
-    public static <T> void registerBean(String label, T t) {
-        Bean<T> bean = new Bean(label, t);
-        try {
-            getContainer().addBean(bean);
-        } catch (BeanAlreadyExistException | IOCContainerException ex) {
-
-        }
-    }
 }
