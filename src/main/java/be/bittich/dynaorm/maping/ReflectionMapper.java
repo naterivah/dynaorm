@@ -18,7 +18,6 @@ package be.bittich.dynaorm.maping;
 import be.bittich.dynaorm.exception.ColumnNotFoundException;
 import be.bittich.dynaorm.exception.RequestInvalidException;
 import be.bittich.dynaorm.repository.DynaRepository;
-import be.bittich.dynaorm.repository.GenericDynaRepository;
 import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Level;
@@ -38,41 +37,34 @@ public class ReflectionMapper implements Serializable {
      *
      * @param <E>
      * @param e
-     * @param clazz
+     * @param lazyRepo
      * @return
      */
-    public static <E> E lazyLoadRelation(E e, final Class<E> clazz) {
+    public static <E> E lazyLoadRelation(E e, DynaRepository<E> lazyRepo) {
 
-        DynaRepository<E> lazyRepo = new GenericDynaRepository() {
-            @Override
-            public Class<E> getClazz() {
-                return clazz;
-            }
-        };
-        return clazz.cast(lazyRepo.findById(e));
+        E v = lazyRepo.findById(e);
+
+        return lazyRepo.findById(v);
     }
 
     /**
-     * That method does a basic findBy to get the list of entities related to the field
+     * That method does a basic findBy to get the list of entities related to
+     * the field
+     *
      * @param <E>
-     * @param value
-     * @param columnName
-     * @param clazz
-     * @return 
+     * @param mapping
+     * @param lazyRepo
+     * @return
      */
-    public static <E> List<E> lazyLoadRelationList(String value, String columnName, final Class<E> clazz) {
+    public static <E> List<E> lazyLoadRelationList(final ForeignKeyMapping<E> mapping, DynaRepository<E> lazyRepo) {
 
-        DynaRepository<E> lazyRepo = new GenericDynaRepository() {
-            @Override
-            public Class<E> getClazz() {
-                return clazz;
-            }
-        };
         try {
-            return lazyRepo.findBy(columnName, value);
+            List<E> list = lazyRepo.findBy(mapping.getIdMappedBy(), mapping.getId());
+            return list;
         } catch (ColumnNotFoundException | RequestInvalidException ex) {
-            Logger.getLogger(ReflectionMapper.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ReflectionMapper.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
         }
         return null;
     }
+
 }

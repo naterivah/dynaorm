@@ -85,16 +85,17 @@ public abstract class GenericDynaRepository<T> implements DynaRepository<T> {
     }
 
     @Override
+    @SuppressWarnings("SleepWhileInLoop")
     public List<T> findAll() {
 
         try {
             String request = dialect.selectAll(tableColumn.getTableName());
             List<T> results = runner.query(request, getListHandler());
-            //just before returning the list
             if (results != null) {
-
                 for (T result : results) {
+                    //wait a little bit before the next request
                     this.loadInvoker(result);
+
                 }
             }
             return results;
@@ -105,6 +106,7 @@ public abstract class GenericDynaRepository<T> implements DynaRepository<T> {
     }
 
     @Override
+    
     public T findById(T t) {
         //get the primary keys
         Map<Field, PrimaryKey> fieldPrimary = getAnnotedFields(t, PrimaryKey.class);
@@ -118,7 +120,6 @@ public abstract class GenericDynaRepository<T> implements DynaRepository<T> {
             //just before returning the result
             if (result != null) {
                 this.loadInvoker(result);
-
             }
             return result;
         } catch (SQLException ex) {
@@ -126,7 +127,7 @@ public abstract class GenericDynaRepository<T> implements DynaRepository<T> {
         } catch (RequestInvalidException ex) {
             Logger.getLogger(GenericDynaRepository.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return null;
+        throw new RuntimeException("Id Not found");
     }
 
     @Override
@@ -151,6 +152,9 @@ public abstract class GenericDynaRepository<T> implements DynaRepository<T> {
     }
 
     @Override
+    /**
+     * will not call loadInvoker to prevent multiple requests !
+     */
     public List<T> findBy(String columnName, String value) throws ColumnNotFoundException, RequestInvalidException {
         Integer type = tableColumn.getTypeOfColumn(columnName);
         if (type == null) {
@@ -166,10 +170,7 @@ public abstract class GenericDynaRepository<T> implements DynaRepository<T> {
         } catch (SQLException ex) {
             LOG.log(Level.SEVERE, null, ex);
         }
-        for (T result : results) {
-            this.loadInvoker(result);
 
-        }
         return results;
     }
 
