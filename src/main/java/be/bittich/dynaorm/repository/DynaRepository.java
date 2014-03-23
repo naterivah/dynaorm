@@ -20,6 +20,8 @@ import be.bittich.dynaorm.exception.ColumnNotFoundException;
 import be.bittich.dynaorm.exception.EntityDoesNotExistException;
 import be.bittich.dynaorm.exception.RequestInvalidException;
 import java.io.Serializable;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -40,5 +42,9 @@ public interface DynaRepository<T> extends Serializable {
     List<T> findBy(String columnName, String value) throws ColumnNotFoundException, RequestInvalidException;
 
     TableColumn getTableColumn();
+    
+    ResultSet executeQuerySQL(String sql,Object...params) throws SQLException;
+    
+    int executeQueryUpdateSQL(String sql,Object...params) throws SQLException;
 
 }

@@ -32,6 +32,8 @@ import be.bittich.dynaorm.maping.ColumnMapping;
 import be.bittich.dynaorm.maping.DynaRowProcessor;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -57,7 +59,7 @@ public abstract class GenericDynaRepository<T> implements DynaRepository<T> {
 
     private static final long serialVersionUID = 1L;
     protected static final Logger LOG = Logger.getLogger("GenericDynaRepository");
-    private Class<T> clazz;
+    private final Class<T> clazz;
     protected QueryRunner runner;
     protected Dialect dialect;
     protected TableColumn tableColumn;
@@ -85,7 +87,6 @@ public abstract class GenericDynaRepository<T> implements DynaRepository<T> {
     }
 
     @Override
-    @SuppressWarnings("SleepWhileInLoop")
     public List<T> findAll() {
 
         try {
@@ -184,7 +185,12 @@ public abstract class GenericDynaRepository<T> implements DynaRepository<T> {
             merge(t);
         }
     }
-
+    
+    
+    /**
+    * Update an entity to the db
+    * @param t 
+    */
     protected void merge(T t) {
         try {
             Map<Field, PrimaryKey> fieldPrimary = getAnnotedFields(t, PrimaryKey.class);
@@ -219,7 +225,7 @@ public abstract class GenericDynaRepository<T> implements DynaRepository<T> {
     }
 
     /**
-     * TODO refactor this portion of code
+     * Persist the given object in the db
      *
      * @param t
      */
@@ -247,6 +253,9 @@ public abstract class GenericDynaRepository<T> implements DynaRepository<T> {
         return handler;
     }
 
+    /**
+     * Configuration
+     */
     private void configure() {
         runner = getQueryRunner();
         dialect = getDialect();
@@ -281,5 +290,43 @@ public abstract class GenericDynaRepository<T> implements DynaRepository<T> {
     protected void loadInvoker(T t) {
         //do nothing by default
     }
+
+    /**
+     * execute a query sql and returns a resultset
+     * @param sql
+     * @param params
+     * @return
+     * @throws SQLException
+     */
+    @Override
+   
+    public ResultSet executeQuerySQL(String sql,Object...params) throws SQLException {
+        Connection conn=runner.getDataSource().getConnection();
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        for (int i = 0; i < params.length; i++) {
+            stmt.setObject(i+1, params[i]);
+        }
+        return stmt.executeQuery();
+    }
+    
+    /**
+     * Execute a query sql and return an int
+     * @param sql
+     * @param params
+     * @return
+     * @throws SQLException 
+     */
+
+    @Override
+    public int executeQueryUpdateSQL(String sql,Object...params) throws SQLException{
+        Connection conn=runner.getDataSource().getConnection();
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        for (int i = 0; i < params.length; i++) {
+            stmt.setObject(i+1, params[i]);
+        }
+         return stmt.executeUpdate();
+    }
+    
+    
 
 }
